@@ -6,7 +6,7 @@ Value=0
 [BUILD_TYPE]
 Value=0
 [ACTIVE_TAB]
-Value=main.c
+Value=asteroidsDBG.c
 [USE_EEPROM]
 Value=0
 [USE_HEAP]
@@ -16,18 +16,17 @@ Value=0
 [EEPROM_DEFINITION]
 Value=
 [FILES]
-File0=main.c
-Count=2
+File0=asteroidsDBG.c
+Count=1
 [BINARIES]
 Count=0
 [IMAGES]
 Count=0
 ActiveImageIndex=-1
 [OPENED_FILES]
-File0=main.c
-File3=.\Include\drawGlcd.h
-File4=.\Include\frames.h
-Count=5
+File0=asteroidsDBG.c
+File1=.\Include\configPins.h
+Count=2
 [EEPROM]
 Count=0
 [ACTIVE_COMMENTS_FILES]
@@ -35,8 +34,7 @@ Count=0
 [OTHER_FILES]
 Count=0
 [SEARCH_PATH]
-Path0=.\Include\
-Count=1
+Count=0
 [HEADER_PATH]
 Count=0
 [HEADERS]
@@ -46,18 +44,20 @@ Count=0
 [Useses]
 File0=Glcd
 File1=Glcd_Fonts
-Count=2
+File2=C_Stdlib
+File3=C_Type
+Count=4
 [INTERRUPT_DEFS]
 VECTOR_MODE=0
 IVT_BASE=00000008
 [EXPANDED_NODES]
 0=main.mcppi
 1=Sources
-3=Include
-Count=3
+Count=2
 [LIB_EXPANDED_NODES]
 0=mikroE Libraries
 1=System Libraries
+107=C_Stdlib
 Count=3
 [PROGRAMMER_TYPE]
 Value=mikroE mikroProg

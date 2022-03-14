@@ -12,6 +12,19 @@ typedef struct
 } Rect;
 
 
+typedef struct
+{
+  int8_t dx, dy;
+} Vec2;
+
+typedef struct
+{
+  Rect rect;
+  Vec2 vel;
+} Splite;
+
+
+
 
 void draw_clear()
 {
@@ -36,7 +49,15 @@ void draw_circle(Rect circle, uint8_t color)
   Glcd_Circle(circle.x, circle.y, circle.w, color);
 }
 
+void draw_dot(Splite player, uint8_t color)
+{
+  Glcd_Dot(player.rect.x, player.rect.y, color);
+}
 
+void draw_horizontal_line(Rect asteroid, uint8_t color)
+{
+  Glcd_H_Line(asteroid.x, asteroid.x + asteroid.w, asteroid.y,  color);
+}
 
 
 int draw_MenuGame(uint8_t modeGame)
@@ -57,9 +78,6 @@ int draw_MenuGame(uint8_t modeGame)
     }
     if ((key.up || key.down)  && (modeGame == 0))
     {
-      //draw_circle(select, 0);
-      //draw_clear();
-      //draw_MenuFrame();
       draw_circle(select, 0);
       select.y = select.y + 14;  //offset
       draw_circle(select, 1);
@@ -74,9 +92,6 @@ int draw_MenuGame(uint8_t modeGame)
     }
     if ((key.up || key.down ) && (modeGame == 1)) 
     {
-      //draw_circle(select, 0);
-      //draw_clear();
-      //draw_MenuFrame();
       draw_circle(select, 0);     
       select.y = select.y - 14;  //offset
       draw_circle(select, 1);     

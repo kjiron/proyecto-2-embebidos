@@ -16,5 +16,5 @@
 *.log
 *.mcl
 *.venv/
-
+*.h.ini
 
