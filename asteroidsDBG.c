@@ -2,6 +2,7 @@
 
 #define ERASE 0
 #define DRAW  1
+#define NUM_ASTEROIDS 13
 // Glcd module connections
 char GLCD_DataPort at PORTD;
 
@@ -34,28 +35,64 @@ uint8_t randint(uint8_t n)
     return (uint8_t)(rand() % (n+1));
 }
 
+void initEnvironment(Rect *s)
+{
+    uint8_t i, offset_x, offset_y;
+    offset_x = 0;
+    offset_y = 53;
+    for (i = 0; i <= 12; i++)
+    {        
+        s[i].x = offset_x;
+        s[i].y = offset_y;
+        s[i].w = 3;
+        s[i].h = 1;
+
+        offset_x = randint(123); 
+        offset_y = offset_y - 4;
+    }
+}
+
+
+void environment(Rect *s)
+{
+    uint8_t i;
+    for (i = 0; i <= NUM_ASTEROIDS - 1; i++)
+    {
+        draw_horizontal_line(s[i], ERASE);
+
+        if ((i % 2) == 1)
+        {
+            if (s[i].x <= 0)
+            {
+                s[i].x = 124;
+            }
+            s[i].x--;
+        }
+        else
+        {
+            if (s[i].x >= 124)
+            {
+                s[i].x = 0;
+            }
+            s[i].x++;
+        }
+        draw_horizontal_line(s[i], DRAW);
+    }
+    
+}
+
+
 
 
 
 void main()
 {
     
-    Rect m[13];//cuidado
-    uint8_t i, offset_x, offset_y;
-    offset_x = 0;
-    offset_y = 53;
-
-    //init de cohetes ****n-1
-    for (i = 0; i <= 12; i++)
-    {        
-        m[i].x = offset_x;
-        m[i].y = offset_y;
-        m[i].w = 3;
-        m[i].h = 1;
-
-        offset_x = randint(123); 
-        offset_y = offset_y - 4;
-    }
+    Rect m[NUM_ASTEROIDS];//cuidado
+    
+    //seteo las pocisiones
+    initEnvironment(m);
+    
     
     Glcd_Init();
     Glcd_Fill(0x00);
@@ -63,30 +100,8 @@ void main()
 
     while (1)
     {
-        
-        for (i = 0; i <= 12; i++)
-        {
-            draw_horizontal_line(m[i], ERASE);
-
-            if ((i % 2) == 1)
-            {
-                if (m[i].x <= 0)
-                {
-                    m[i].x = 124;
-                }
-                m[i].x--;
-            }
-            else
-            {
-                if (m[i].x >= 124)
-                {
-                    m[i].x = 0;
-                }
-                m[i].x++;
-            }
-            draw_horizontal_line(m[i], DRAW);
-        }        
-
+        //mueve y pinto los Rect
+        environment(m);
         Delay_ms(60);
 
     }
