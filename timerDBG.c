@@ -4,7 +4,7 @@
 #define DRAW  1
 
 
-uint8_t TIME_FLAG = 0;
+uint8_t timeFlag = 0;
 uint8_t contador_ms = 0;
 
 
@@ -38,26 +38,25 @@ typedef struct
  
 //Place/Copy this part in declaration section
 void InitTimer0(){
-  T0CON	 = 0x83;
-  TMR0H	 = 0x0B;
-  TMR0L	 = 0xDC;
-  GIE_bit	 = 1;
-  TMR0IE_bit	 = 1;
+  T0CON         = 0x83;
+  TMR0H         = 0x0B;
+  TMR0L         = 0xDC;
+  GIE_bit       = 1;
+  TMR0IE_bit    = 1;
 }
  
 void Interrupt(){
   if (TMR0IF_bit){ 
     TMR0IF_bit = 0;
-    TMR0H	 = 0x0B;
-    TMR0L	 = 0xDC;
+    TMR0H         = 0x0B;
+    TMR0L         = 0xDC;
     //Enter your code here
-    contador_ms++;
+    contador_ms++;  
     if (contador_ms >= 2)
     {
-      TIME_FLAG = 1;
+      timeFlag = 1;
       contador_ms = 0;
     }
-    
   }
 } 
 
@@ -86,16 +85,16 @@ void main()
 
     if (timer.y >= 63)
     {
-      timer.y = 23;
+      timer.y = 3;
     }
 
     //llama a la interrupcion cada un segundo
-    if (TIME_FLAG)
+    if (timeFlag)
     {
       timer.y++;
-      TIME_FLAG = 0;
+      timeFlag = 0;
     }
-    
+
     
 
     draw_box(timer, DRAW);

@@ -2,7 +2,7 @@
 
 ## ToDo KJiron
 - [x] [environment](/asteroidsDBG.c)  
-- [x] [time](/timerDBG.c) esta hecho por interrupción, hay que ver si da problema con el UART
+- [x] [time](/timerDBG.c) esta hecho por interrupción, hay que ver si da problema con el UART. Lo mejor sería implementar la función milis() para no tener 500ms quemados. 
 - [] moveAI
 - [] read another key
 
