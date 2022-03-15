@@ -26,6 +26,7 @@ typedef struct
 
 
 
+
 void draw_clear()
 {
   Glcd_Fill(0x00);

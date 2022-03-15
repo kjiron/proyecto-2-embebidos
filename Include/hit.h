@@ -4,8 +4,16 @@
 #include "drawGlcd.h"
 #include "keys.h"
 
+#define ERASE           0
+#define DRAW            1
+#define NUM_ASTEROIDS   13
+
 uint8_t x = 0;
 
+uint8_t randint(uint8_t n)
+{
+  return (uint8_t)(rand() % (n+1));
+}
 
 
 Splite move_player(Splite player)
@@ -37,32 +45,52 @@ Splite move_player(Splite player)
 
 
 
-void environment()
-{   
-    
-    Glcd_H_Line(x, x + 3, 60, 0);
-    if (x >= 124)
-    {
-        x = 0;
-    }   
-    x++;
-    Glcd_H_Line(x, x + 3, 60, 1);
-    /*
-    uint8_t i;
-    uint8_t w = 3;    
-    uint8_t h = 5;    
+void initEnvironment(Rect *s)
+{
+    uint8_t i, offset_x, offset_y;
+    offset_x = 0;
+    offset_y = 53;
+    for (i = 0; i <= 12; i++)
+    {        
+        s[i].x = offset_x;
+        s[i].y = offset_y;
+        s[i].w = 3;
+        s[i].h = 1;
 
-    uint8_t offset = 60;    
-
-
-    for (i = 0; i <= 10; i++)
-    {
-        Glcd_H_Line(i, i + w, offset - h, 0);
-        
-
+        offset_x = randint(123); 
+        offset_y = offset_y - 4;
     }
-    */
 }
+
+
+void environment(Rect *s)
+{
+    uint8_t i;
+    for (i = 0; i <= NUM_ASTEROIDS - 1; i++)
+    {
+        draw_horizontal_line(s[i], ERASE);
+
+        if ((i % 2) == 1)
+        {
+            if (s[i].x <= 0)
+            {
+                s[i].x = 124;
+            }
+            s[i].x--;
+        }
+        else
+        {
+            if (s[i].x >= 124)
+            {
+                s[i].x = 0;
+            }
+            s[i].x++;
+        }
+        draw_horizontal_line(s[i], DRAW);
+    }
+    
+}
+
 
 
 /*
