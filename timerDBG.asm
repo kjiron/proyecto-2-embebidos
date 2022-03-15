@@ -100,25 +100,6 @@ L_main2:
 	CALL        _InitTimer0+0, 0
 ;timerDBG.c,81 :: 		while (1)
 L_main3:
-;timerDBG.c,84 :: 		draw_box(timer, ERASE);
-	MOVLW       4
-	MOVWF       R0 
-	MOVLW       FARG_draw_box_asteroid+0
-	MOVWF       FSR1L+0 
-	MOVLW       hi_addr(FARG_draw_box_asteroid+0)
-	MOVWF       FSR1L+1 
-	MOVLW       main_timer_L0+0
-	MOVWF       FSR0L+0 
-	MOVLW       hi_addr(main_timer_L0+0)
-	MOVWF       FSR0L+1 
-L_main5:
-	MOVF        POSTINC0+0, 0 
-	MOVWF       POSTINC1+0 
-	DECF        R0, 1 
-	BTFSS       STATUS+0, 2 
-	GOTO        L_main5
-	CLRF        FARG_draw_box_color+0 
-	CALL        _draw_box+0, 0
 ;timerDBG.c,86 :: 		if (timer.y >= 63)
 	MOVLW       128
 	XORWF       main_timer_L0+1, 0 
@@ -127,16 +108,16 @@ L_main5:
 	XORLW       63
 	SUBWF       R0, 0 
 	BTFSS       STATUS+0, 0 
-	GOTO        L_main6
+	GOTO        L_main5
 ;timerDBG.c,88 :: 		timer.y = 3;
 	MOVLW       3
 	MOVWF       main_timer_L0+1 
 ;timerDBG.c,89 :: 		}
-L_main6:
+L_main5:
 ;timerDBG.c,92 :: 		if (timeFlag)
 	MOVF        _timeFlag+0, 1 
 	BTFSC       STATUS+0, 2 
-	GOTO        L_main7
+	GOTO        L_main6
 ;timerDBG.c,94 :: 		timer.y++;
 	MOVF        main_timer_L0+1, 0 
 	ADDLW       1
@@ -146,8 +127,8 @@ L_main6:
 ;timerDBG.c,95 :: 		timeFlag = 0;
 	CLRF        _timeFlag+0 
 ;timerDBG.c,96 :: 		}
-L_main7:
-;timerDBG.c,100 :: 		draw_box(timer, DRAW);
+L_main6:
+;timerDBG.c,98 :: 		draw_box(timer, DRAW);
 	MOVLW       4
 	MOVWF       R0 
 	MOVLW       FARG_draw_box_asteroid+0
@@ -158,36 +139,55 @@ L_main7:
 	MOVWF       FSR0L+0 
 	MOVLW       hi_addr(main_timer_L0+0)
 	MOVWF       FSR0L+1 
-L_main8:
+L_main7:
 	MOVF        POSTINC0+0, 0 
 	MOVWF       POSTINC1+0 
 	DECF        R0, 1 
 	BTFSS       STATUS+0, 2 
-	GOTO        L_main8
+	GOTO        L_main7
 	MOVLW       1
 	MOVWF       FARG_draw_box_color+0 
 	CALL        _draw_box+0, 0
-;timerDBG.c,105 :: 		Delay_ms(60);
+;timerDBG.c,99 :: 		Delay_ms(60);
 	MOVLW       156
 	MOVWF       R12, 0
 	MOVLW       215
 	MOVWF       R13, 0
-L_main9:
+L_main8:
 	DECFSZ      R13, 1, 1
-	BRA         L_main9
+	BRA         L_main8
 	DECFSZ      R12, 1, 1
-	BRA         L_main9
-;timerDBG.c,107 :: 		}
+	BRA         L_main8
+;timerDBG.c,100 :: 		draw_box(timer, ERASE);
+	MOVLW       4
+	MOVWF       R0 
+	MOVLW       FARG_draw_box_asteroid+0
+	MOVWF       FSR1L+0 
+	MOVLW       hi_addr(FARG_draw_box_asteroid+0)
+	MOVWF       FSR1L+1 
+	MOVLW       main_timer_L0+0
+	MOVWF       FSR0L+0 
+	MOVLW       hi_addr(main_timer_L0+0)
+	MOVWF       FSR0L+1 
+L_main9:
+	MOVF        POSTINC0+0, 0 
+	MOVWF       POSTINC1+0 
+	DECF        R0, 1 
+	BTFSS       STATUS+0, 2 
+	GOTO        L_main9
+	CLRF        FARG_draw_box_color+0 
+	CALL        _draw_box+0, 0
+;timerDBG.c,103 :: 		}
 	GOTO        L_main3
-;timerDBG.c,109 :: 		}
+;timerDBG.c,105 :: 		}
 L_end_main:
 	GOTO        $+0
 ; end of _main
 
 _draw_box:
 
-;timerDBG.c,111 :: 		void draw_box(Rect r, uint8_t color)
-;timerDBG.c,114 :: 		Glcd_Box(r.x, r.y, r.x + r.w, r.y + r.h, color);
+;timerDBG.c,107 :: 		void draw_box(Rect r, uint8_t color)
+;timerDBG.c,110 :: 		Glcd_Box(r.x, r.y, r.x + r.w, r.y + r.h, color);
 	MOVF        FARG_draw_box_r+0, 0 
 	MOVWF       FARG_Glcd_Box_x_upper_left+0 
 	MOVF        FARG_draw_box_r+1, 0 
@@ -201,7 +201,7 @@ _draw_box:
 	MOVF        FARG_draw_box_color+0, 0 
 	MOVWF       FARG_Glcd_Box_color+0 
 	CALL        _Glcd_Box+0, 0
-;timerDBG.c,115 :: 		}
+;timerDBG.c,111 :: 		}
 L_end_draw_box:
 	RETURN      0
 ; end of _draw_box

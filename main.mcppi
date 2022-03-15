@@ -60,7 +60,7 @@ Count=2
 0=mikroE Libraries
 1=System Libraries
 107=C_Stdlib
-Count=3
+Count=4
 [PROGRAMMER_TYPE]
 Value=mikroE mikroProg
 [CODEGRIP_OPTIONS]

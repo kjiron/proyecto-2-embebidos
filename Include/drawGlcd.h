@@ -60,6 +60,12 @@ void draw_horizontal_line(Rect asteroid, uint8_t color)
   Glcd_H_Line(asteroid.x, asteroid.x + asteroid.w, asteroid.y,  color);
 }
 
+void draw_box(Rect r, uint8_t color)
+{
+  //void Glcd_Rectangle(unsigned short x_upper_left, unsigned short y_upper_left, unsigned short x_bottom_right, unsigned short y_bottom_right, unsigned short color);
+  Glcd_Box(r.x, r.y, r.x + r.w, r.y + r.h, color);  
+}
+
 
 
 int draw_MenuGame(uint8_t modeGame)
@@ -104,7 +110,7 @@ int draw_MenuGame(uint8_t modeGame)
 }
 
 
-void draw_ship(Rect player, code const unsigned short * image)
+void draw_partial_image(Rect player, code const unsigned short * image)
 {
   //forma sencilla
   //void Glcd_PartialImage(unsigned int x_left, unsigned int y_top, unsigned int width, unsigned int height, unsigned int picture_width, unsigned int picture_height, code const unsigned short * image);

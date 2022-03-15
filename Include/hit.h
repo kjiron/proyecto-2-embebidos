@@ -1,6 +1,7 @@
 #ifndef __HIT__
 #define __HIT__
 
+
 #include "drawGlcd.h"
 #include "keys.h"
 
@@ -10,26 +11,51 @@
 
 uint8_t x = 0;
 
+
+static inline bool check_collision00(Rect rect1, Rect rect2)
+{
+    return rect1.x < rect2.x + rect2.w &&
+       rect1.x + rect1.w > rect2.x &&
+       rect1.y < rect2.y + rect2.h &&
+       rect1.h + rect1.y > rect2.y;
+}
+
+
+bool check_collision(Rect asteroid, Rect player)
+{
+   return check_collision00(asteroid, player);
+}
+
+
 uint8_t randint(uint8_t n)
 {
   return (uint8_t)(rand() % (n+1));
 }
 
 
-Splite move_player(Splite player)
+Splite move_player(Splite player, Rect *a)
 {
    Keys key;
-   Rect eraser;
-   eraser = player.rect;
+   uint8_t i;
    key = readKeys();
+
+   for (i = 0; i <= NUM_ASTEROIDS - 1; i++){
+      if (check_collision(a[i], player.rect))
+      {
+         player.rect.x = 32;
+         player.rect.y = 55;
+         return player;
+      }
+      
+   }
+
 
    if (key.down){
       player.rect.y += player.vel.dy;
+      
       if (player.rect.y + (player.rect.h - 1) >= 63){
          player.rect.y = 55;
       }
-      draw_ship(eraser, parche);
-     
    }
 
    else if (key.up){
@@ -37,11 +63,10 @@ Splite move_player(Splite player)
       if (player.rect.y <= 0){
          player.rect.y = 0;
       }
-      draw_ship(eraser, parche);
-
-      
-
    }
+
+   
+   
 
    else{
       return player;
@@ -76,8 +101,6 @@ void environment(Rect *s)
     uint8_t i;
     for (i = 0; i <= NUM_ASTEROIDS - 1; i++)
     {
-        draw_horizontal_line(s[i], ERASE);
-
         if ((i % 2) == 1)
         {
             if (s[i].x <= 0)
@@ -94,30 +117,15 @@ void environment(Rect *s)
             }
             s[i].x++;
         }
-        draw_horizontal_line(s[i], DRAW);
     }
     
 }
 
 
 
+
+
 /*
-
-static inline bool check_collision00(Rect rect1, Rect rect2)
-{
-    return rect1.x < rect2.x + rect2.w &&
-       rect1.x + rect1.w > rect2.x &&
-       rect1.y < rect2.y + rect2.h &&
-       rect1.h + rect1.y > rect2.y;
-}
-
-
-bool check_collision(Splite ball, Splite player)
-{
-   return check_collision00(ball.rect, player.rect);
-}
-
-
 
 void checkWallCollision(Splite *ball)
 {

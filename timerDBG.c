@@ -81,7 +81,7 @@ void main()
   while (1)
   {
 
-    draw_box(timer, ERASE);
+
 
     if (timer.y >= 63)
     {
@@ -95,14 +95,10 @@ void main()
       timeFlag = 0;
     }
 
-    
-
     draw_box(timer, DRAW);
-
-    
-    
-    
     Delay_ms(60);
+    draw_box(timer, ERASE);
+
 
   }
 
