@@ -2,7 +2,7 @@
 
 ## ToDo KJiron
 - [x] [environment](/asteroidsDBG.c)  
-- [] time
+- [x] [time](/timerDBG.c) esta hecho por interrupción, hay que ver si da problema con el UART
 - [] moveAI
 - [] read another key
 
