@@ -61,6 +61,7 @@ void draw_horizontal_line(Rect asteroid, uint8_t color)
 }
 
 
+
 int draw_MenuGame(uint8_t modeGame)
 {
   Keys key;
@@ -103,7 +104,17 @@ int draw_MenuGame(uint8_t modeGame)
 }
 
 
+void draw_ship(Rect player, code const unsigned short * image)
+{
+  //forma sencilla
+  //void Glcd_PartialImage(unsigned int x_left, unsigned int y_top, unsigned int width, unsigned int height, unsigned int picture_width, unsigned int picture_height, code const unsigned short * image);
+  Glcd_PartialImage(player.x, player.y, player.w, player.h, player.w, player.h, image);
+  
+  
 
+  
+  
+}
 
 
 #endif

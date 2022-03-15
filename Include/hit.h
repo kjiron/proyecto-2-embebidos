@@ -19,13 +19,17 @@ uint8_t randint(uint8_t n)
 Splite move_player(Splite player)
 {
    Keys key;
+   Rect eraser;
+   eraser = player.rect;
    key = readKeys();
 
    if (key.down){
       player.rect.y += player.vel.dy;
-      if (player.rect.y >= 63){
-         player.rect.y = 63;
+      if (player.rect.y + (player.rect.h - 1) >= 63){
+         player.rect.y = 55;
       }
+      draw_ship(eraser, parche);
+     
    }
 
    else if (key.up){
@@ -33,13 +37,17 @@ Splite move_player(Splite player)
       if (player.rect.y <= 0){
          player.rect.y = 0;
       }
+      draw_ship(eraser, parche);
+
+      
+
    }
 
    else{
       return player;
    }
 
-  return player;
+   return player;
 
 }
 
