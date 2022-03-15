@@ -48,7 +48,9 @@ File0=Glcd
 File1=Glcd_Fonts
 File2=C_Stdlib
 File3=C_Type
-Count=4
+File4=Conversions
+File5=C_String
+Count=6
 [INTERRUPT_DEFS]
 VECTOR_MODE=0
 IVT_BASE=00000008
@@ -59,8 +61,7 @@ Count=2
 [LIB_EXPANDED_NODES]
 0=mikroE Libraries
 1=System Libraries
-107=C_Stdlib
-Count=4
+Count=2
 [PROGRAMMER_TYPE]
 Value=mikroE mikroProg
 [CODEGRIP_OPTIONS]

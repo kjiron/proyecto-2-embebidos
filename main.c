@@ -1,5 +1,4 @@
 #include <stdint.h>
-//#include <stdbool.h>
 #include "\Include\drawGlcd.h"
 #include "\Include\hit.h"
 
@@ -11,6 +10,7 @@
 
 uint8_t timeFlag = 0;
 uint8_t contador_ms = 0;
+
 
 void InitTimer0(){
   T0CON         = 0x83;
@@ -36,6 +36,22 @@ void Interrupt(){
 } 
 
 
+void updateGameTime(Rect *t)
+{
+    if (t->y >= 63)
+    {
+        t->y = 3;
+    }
+    //llama a la interrupcion cada un segundo
+    if (timeFlag)
+    {
+        t->y++;
+        timeFlag = 0;
+    }
+
+}
+
+
 
 
 void main() {
@@ -44,9 +60,10 @@ void main() {
     uint8_t modeGame = 0;
     uint8_t i;
     Splite playerOne;
-    //Rect eraser;
 
-    //Keys key;
+
+
+
 
     playerOne.rect.x = 32;
     playerOne.rect.y = 55;
@@ -73,6 +90,7 @@ void main() {
 
 
 
+
     while (1)
     {
         switch (state)
@@ -89,25 +107,19 @@ void main() {
         case ONEPLAYER:
             draw_clear();
             draw_partial_image(playerOne.rect, ship);
-            //draw_dot(playerOne, DRAW);
+            draw_score(scoreA, scoreB);
+
             draw_box(timer, DRAW);
 
             while (1)
             {
-                if (timer.y >= 63)
-                {
-                    timer.y = 3;
-                }
-                //llama a la interrupcion cada un segundo
-                if (timeFlag)
-                {
-                    timer.y++;
-                    timeFlag = 0;
-                }
-
+                updateGameTime(&timer);
+                //en move_player actualizo score ya que muevo el player ahi tambien
                 playerOne = move_player(playerOne, m);
-                //ToDo: aqui deberia de verificar si el jugador ha cambiado de posicion respecto a su info anterior
                 environment(m);
+                
+
+
                 draw_box(timer, DRAW);
                 draw_partial_image(playerOne.rect, ship);
                 for (i = 0; i <= NUM_ASTEROIDS - 1; i++){

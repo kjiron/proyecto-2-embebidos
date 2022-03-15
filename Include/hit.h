@@ -10,6 +10,8 @@
 #define NUM_ASTEROIDS   13
 
 uint8_t x = 0;
+uint8_t scoreA = 0, scoreB = 0;
+
 
 
 static inline bool check_collision00(Rect rect1, Rect rect2)
@@ -49,6 +51,8 @@ Splite move_player(Splite player, Rect *a)
       
    }
 
+   
+   
 
    if (key.down){
       player.rect.y += player.vel.dy;
@@ -61,16 +65,18 @@ Splite move_player(Splite player, Rect *a)
    else if (key.up){
       player.rect.y -= player.vel.dy;
       if (player.rect.y <= 0){
-         player.rect.y = 0;
+         player.rect.x = 32;
+         player.rect.y = 55;
+         scoreA++;
+         draw_score(scoreA, scoreB);
+
+         return player;
       }
    }
-
-   
-   
-
    else{
       return player;
    }
+
 
    return player;
 

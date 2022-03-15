@@ -5,6 +5,9 @@
 #include "frames.h"
 #include "keys.h"
 
+char score_text[5];
+
+
 typedef struct
 {
   int8_t x, y;
@@ -114,13 +117,23 @@ void draw_partial_image(Rect player, code const unsigned short * image)
 {
   //forma sencilla
   //void Glcd_PartialImage(unsigned int x_left, unsigned int y_top, unsigned int width, unsigned int height, unsigned int picture_width, unsigned int picture_height, code const unsigned short * image);
-  Glcd_PartialImage(player.x, player.y, player.w, player.h, player.w, player.h, image);
-  
-  
-
-  
-  
+  Glcd_PartialImage(player.x, player.y, player.w, player.h, player.w, player.h, image); 
 }
 
+void draw_text(char *text, uint8_t x)
+{
+  Glcd_Write_Text(text, x, 7, 1);
+}
+
+void draw_score(uint8_t a, uint8_t b){ //function to draw the score
+  char *fix_text;
+  //draw the score
+  ShortToStr(a, score_text);
+  fix_text = Ltrim(score_text);
+  Glcd_Write_Text(fix_text, 15, 7, 1);
+  ShortToStr(b, score_text);
+  fix_text = Ltrim(score_text);
+  Glcd_Write_Text(fix_text, 107, 7, 1);
+}
 
 #endif

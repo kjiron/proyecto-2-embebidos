@@ -3,6 +3,7 @@
 ## ToDo KJiron
 - [x] [environment](/asteroidsDBG.c)  
 - [x] [time](/timerDBG.c) esta hecho por interrupción, hay que ver si da problema con el UART. Lo mejor sería implementar la función milis() para no tener 500ms quemados. 
+- [x] [hit](/hit.h) se detecta colision con el player y se reinicia en su posicion inicial.
 - [] moveAI
 - [] read another key
 
