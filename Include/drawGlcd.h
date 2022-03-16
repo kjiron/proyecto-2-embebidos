@@ -50,7 +50,12 @@ void draw_winFrame(){
   Glcd_Image(winScreen);
   Delay_ms(4000);
   Glcd_Fill(0x00);
+}
 
+void draw_loseFrame(){
+  Glcd_Image(loseScreen);
+  Delay_ms(4000);
+  Glcd_Fill(0x00);
 }
 
 

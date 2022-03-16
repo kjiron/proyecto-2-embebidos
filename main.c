@@ -12,7 +12,7 @@ uint8_t timeFlag    = 0;
 uint8_t contador_ms = 0;
 uint8_t state, modeGame, i;
 Rect m[NUM_ASTEROIDS], timer;//cuidado
-Splite playerOne;
+Splite playerOne, playerPC;
 
 
 void InitTimer0(){
@@ -53,6 +53,13 @@ void init_game()
     playerOne.rect.h = 9;
     playerOne.vel.dx = 0;
     playerOne.vel.dy = 1;
+    //playerPC
+    playerPC.rect.x = 94;
+    playerPC.rect.y = 55;
+    playerPC.rect.w = 9;
+    playerPC.rect.h = 9;
+    playerPC.vel.dx = 0;
+    playerPC.vel.dy = 1;
     //timer
     timer.x = 62;
     timer.y = 3;
@@ -69,13 +76,22 @@ void updateGameTime(Rect *t)
     
     if (t->y >= 63)
     {
-        //t->y = 3;
         if (scoreA > scoreB)
         {
             draw_winFrame();
             init_game();
-            state = 1;
+            state = MENU;
         }
+
+        else if (scoreB > scoreA)
+        {
+            draw_loseFrame();
+            init_game();
+            state = MENU;
+        }
+
+        //empate
+        
     }
     
     //llama a la interrupcion cada un segundo
@@ -94,18 +110,10 @@ void main() {
     
     state = 0;
 
-
-
-
     init_game();
-    
-
     ADCON1 = 0x0F; 
     Glcd_Init();
     InitTimer0();
-
-
-
 
     while (1)
     {
@@ -127,13 +135,21 @@ void main() {
             {
                 //aqui verifico si el tiempo se acabo, reinicia todo y lanza un frame
                 updateGameTime(&timer);
+                if (state == MENU)
+                {
+                    draw_clear();
+                    break;
+                }
                 //en move_player actualizo score ya que muevo el player ahi tambien
                 playerOne = move_player(playerOne, m);
                 environment(m);
+                playerPC = move_ai(playerPC, m);
+
                 
 
-
+                //draw_dot(playerPC, DRAW);
                 draw_box(timer, DRAW);
+                draw_partial_image(playerPC.rect, ship);
                 draw_partial_image(playerOne.rect, ship);
                 for (i = 0; i <= NUM_ASTEROIDS - 1; i++){
                     draw_horizontal_line(m[i], DRAW);
@@ -144,12 +160,10 @@ void main() {
                 }
                 draw_box(timer, ERASE);
                 draw_partial_image(playerOne.rect, parche);
+                draw_partial_image(playerPC.rect, parche);
+                //draw_dot(playerPC, ERASE);
 
-                if (state == 1)
-                {
-                    draw_clear();
-                    break;
-                }
+                
                 
             }
             

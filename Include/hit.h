@@ -82,6 +82,70 @@ Splite move_player(Splite player, Rect *a)
 
 }
 
+Splite move_ai(Splite pc, Rect *a)
+{
+   uint8_t i, luck;
+   luck = randint(200);
+   for (i = 0; i <= NUM_ASTEROIDS - 1; i++)
+   {
+
+      if (check_collision(a[i], pc.rect))
+      {
+         pc.rect.x = 94;
+         pc.rect.y = 55;
+         return pc;
+      }
+   }
+
+   /*
+   for (i = 0; i <= NUM_ASTEROIDS - 1; i++)
+   {
+
+      if (((a[i].x + 9) > (pc.rect.x)) && ((a[i].y) == (pc.rect.y + (pc.rect.h / 2)))) 
+      {
+         pc.rect.y += pc.vel.dy;
+         return pc;
+      }
+   }
+   */
+
+   if (luck > 185)
+   {
+      pc.rect.y += pc.vel.dy;
+      return pc;
+   }
+
+   else if (luck < 15)
+   {
+      pc.rect.y -= pc.vel.dy;
+      return pc;
+   }
+   
+   
+
+
+   pc.rect.y -= pc.vel.dy;
+
+   if (pc.rect.y <= 0)
+   {
+      pc.rect.x = 94;
+      pc.rect.y = 55;
+      scoreB++;
+      draw_score(scoreA, scoreB);  
+      return pc;
+   }
+
+   else if (pc.rect.y + (pc.rect.h - 1) >= 63){
+      pc.rect.y = 55;
+      return pc;
+   }
+
+   else
+   {
+      return pc;
+   }   
+}
+
 
 
 void initEnvironment(Rect *s)
