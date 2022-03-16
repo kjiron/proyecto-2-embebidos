@@ -46,6 +46,13 @@ void draw_MenuFrame(){
   Glcd_Image(menuFrame);
 }
 
+void draw_winFrame(){
+  Glcd_Image(winScreen);
+  Delay_ms(4000);
+  Glcd_Fill(0x00);
+
+}
+
 
 void draw_circle(Rect circle, uint8_t color)
 { 
@@ -135,5 +142,7 @@ void draw_score(uint8_t a, uint8_t b){ //function to draw the score
   fix_text = Ltrim(score_text);
   Glcd_Write_Text(fix_text, 107, 7, 1);
 }
+
+
 
 #endif

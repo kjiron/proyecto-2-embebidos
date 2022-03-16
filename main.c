@@ -8,8 +8,11 @@
 #define MENU            1
 #define ONEPLAYER       2
 
-uint8_t timeFlag = 0;
+uint8_t timeFlag    = 0;
 uint8_t contador_ms = 0;
+uint8_t state, modeGame, i;
+Rect m[NUM_ASTEROIDS], timer;//cuidado
+Splite playerOne;
 
 
 void InitTimer0(){
@@ -35,13 +38,46 @@ void Interrupt(){
   }
 } 
 
+void init_game()
+{
+    //variables necesarias para el control del juego
+    scoreA = 0;
+    scoreB = 0;
+    timeFlag = 0;
+    contador_ms = 0;
+    modeGame = 0;
+    //playerOne
+    playerOne.rect.x = 32;
+    playerOne.rect.y = 55;
+    playerOne.rect.w = 9;
+    playerOne.rect.h = 9;
+    playerOne.vel.dx = 0;
+    playerOne.vel.dy = 1;
+    //timer
+    timer.x = 62;
+    timer.y = 3;
+    timer.w = 1;
+    timer.h = 60;    
+    //seteo las pocisiones de los asteroides
+    initEnvironment(m);
+}
+
+
 
 void updateGameTime(Rect *t)
 {
+    
     if (t->y >= 63)
     {
-        t->y = 3;
+        //t->y = 3;
+        if (scoreA > scoreB)
+        {
+            draw_winFrame();
+            init_game();
+            state = 1;
+        }
     }
+    
     //llama a la interrupcion cada un segundo
     if (timeFlag)
     {
@@ -55,33 +91,13 @@ void updateGameTime(Rect *t)
 
 
 void main() {
-    Rect m[NUM_ASTEROIDS], timer;//cuidado
-    uint8_t state = 2;
-    uint8_t modeGame = 0;
-    uint8_t i;
-    Splite playerOne;
-
-
-
-
-
-    playerOne.rect.x = 32;
-    playerOne.rect.y = 55;
-    playerOne.rect.w = 9;
-    playerOne.rect.h = 9;
-    playerOne.vel.dx = 0;
-    playerOne.vel.dy = 1;
-
-    //eraser = playerOne.rect;
     
-    //timer
-    timer.x = 62;
-    timer.y = 3;
-    timer.w = 1;
-    timer.h = 60;
-    
-    //seteo las pocisiones
-    initEnvironment(m);
+    state = 0;
+
+
+
+
+    init_game();
     
 
     ADCON1 = 0x0F; 
@@ -106,13 +122,10 @@ void main() {
         
         case ONEPLAYER:
             draw_clear();
-            draw_partial_image(playerOne.rect, ship);
             draw_score(scoreA, scoreB);
-
-            draw_box(timer, DRAW);
-
             while (1)
             {
+                //aqui verifico si el tiempo se acabo, reinicia todo y lanza un frame
                 updateGameTime(&timer);
                 //en move_player actualizo score ya que muevo el player ahi tambien
                 playerOne = move_player(playerOne, m);
@@ -131,6 +144,13 @@ void main() {
                 }
                 draw_box(timer, ERASE);
                 draw_partial_image(playerOne.rect, parche);
+
+                if (state == 1)
+                {
+                    draw_clear();
+                    break;
+                }
+                
             }
             
             break;
