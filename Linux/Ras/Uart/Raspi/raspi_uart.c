@@ -35,8 +35,8 @@ int main(int argc, char **argv){
 	timeout.tv_sec = 1;
 	timeout.tv_usec = 0;
 
-	puerto_serial = open("/dev/ttyUSB0", O_RDWR);  // /dev/ttyS0
-	//puerto_serial = open("/dev/ttyS0", O_RDWR);  // /dev/ttyS0
+	//puerto_serial = open("/dev/ttyUSB0", O_RDWR);  // /dev/ttyS0
+	puerto_serial = open("/dev/ttyS0", O_RDWR);  // /dev/ttyS0
 	ndfs = puerto_serial + 1;
 	
 	//////preparing select()
