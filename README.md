@@ -11,6 +11,6 @@
 
 - [x] dibujar/mover pixel en GLCD
 - [x] dibujar/mover pixel en SDL
-- [] mover pixel de placa desde PC
-- [] mover pixel de PC desde placa
+- [x] mover pixel de placa desde PC
+- [x] mover pixel de PC desde placa
 
