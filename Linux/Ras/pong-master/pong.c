@@ -287,45 +287,36 @@ int main (int argc, char *args[]) {
 		
 		if (keystate[SDL_SCANCODE_DOWN]) {
 			
-			buffer=0xBB;
-			if(FD_ISSET(puerto_serial, &r_set))
-			{
-				write(puerto_serial, &buffer, sizeof(char));
-			}
-			SDL_Delay(10);
 			move_paddle(0);
-			if(FD_ISSET(puerto_serial, &r_set))
-			{
-				buffer = paddle[0].y/2;
-				write(puerto_serial, &buffer, sizeof(char));
-			}
-			SDL_Delay(10);
 		}
 
 		if (keystate[SDL_SCANCODE_UP]) {
 			
+			move_paddle(1);
+		}
+		
+		if(FD_ISSET(puerto_serial, &r_set))
+		{
 			buffer=0xBB;
 			if(FD_ISSET(puerto_serial, &r_set))
 			{
 				write(puerto_serial, &buffer, sizeof(char));
 			}
 			SDL_Delay(10);
-			move_paddle(1);
 			if(FD_ISSET(puerto_serial, &r_set))
 			{
 				buffer = paddle[0].y/2;
 				write(puerto_serial, &buffer, sizeof(char));
 			}
 			SDL_Delay(10);
-		}
-		
+			
 			read(puerto_serial, &buffer, sizeof(char));
 			if (buffer==0xBB)
 			{
 				read(puerto_serial, &buffer, sizeof(char));
 				paddle[1].y = 2*(int)buffer;
 			}
-		
+		}
 		//draw background
 		SDL_RenderClear(renderer);
 		SDL_FillRect(screen, NULL, 0x000000ff);
