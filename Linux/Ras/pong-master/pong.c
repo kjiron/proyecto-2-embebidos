@@ -295,7 +295,8 @@ int main (int argc, char *args[]) {
 			move_paddle(0);
 			if(FD_ISSET(puerto_serial, &r_set))
 			{
-				write(puerto_serial, &(paddle[0].y/2), sizeof(char));
+				buffer = paddle[0].y/2;
+				write(puerto_serial, &buffer, sizeof(char));
 			}
 		}
 
@@ -309,7 +310,8 @@ int main (int argc, char *args[]) {
 			move_paddle(1);
 			if(FD_ISSET(puerto_serial, &r_set))
 			{
-				write(puerto_serial, &(paddle[0].y/2), sizeof(char));
+				buffer = paddle[0].y/2;
+				write(puerto_serial, &buffer, sizeof(char));
 			}
 		}
 		
