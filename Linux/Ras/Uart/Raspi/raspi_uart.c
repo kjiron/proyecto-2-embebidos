@@ -20,6 +20,7 @@ fd_set all_set, r_set; //file descriptors to use on select()
 struct timeval tv;
 int TamMsj;
 int numBytes;
+char buffer;
 
 char bufferEntrante[Tam_buffer];
 
@@ -34,8 +35,8 @@ int main(int argc, char **argv){
 	timeout.tv_sec = 1;
 	timeout.tv_usec = 0;
 
-	//puerto_serial = open("/dev/ttyUSB0", O_RDWR);  // /dev/ttyS0
-	puerto_serial = open("/dev/ttyS0", O_RDWR);  // /dev/ttyS0
+	puerto_serial = open("/dev/ttyUSB0", O_RDWR);  // /dev/ttyS0
+	//puerto_serial = open("/dev/ttyS0", O_RDWR);  // /dev/ttyS0
 	ndfs = puerto_serial + 1;
 	
 	//////preparing select()
@@ -94,13 +95,12 @@ int main(int argc, char **argv){
 		if(FD_ISSET(puerto_serial, &r_set))
 		{
 
-			memset(bufferEntrante, '\0', sizeof(bufferEntrante));
-			numBytes = read(puerto_serial, &bufferEntrante, sizeof(bufferEntrante)); // lee el UART y cae sobre bufferEntrante
+			read(puerto_serial, &buffer, sizeof(char)); // lee el UART y cae sobre bufferEntrante
 
 			// TamMsj = write(puerto_serial, seg,strlen(seg));
 			//guarda en TamMsj el tamaño en bytes del write y envia por uart "seg" con tamaño efectivo de "seg"
 
-            printf("bufferEntrante: %s\n", bufferEntrante );// imprime la entrada del UART 
+            printf("buffer: %i\n", (int)buffer );// imprime la entrada del UART 
 		
 			FD_CLR(puerto_serial, &r_set);
 			printf("\r");
