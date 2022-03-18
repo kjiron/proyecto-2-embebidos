@@ -291,10 +291,10 @@ int main (int argc, char *args[]) {
 			move_paddle(0);
 
 			bufferWrite=0xBB;
-			write(puerto_serial, &buffer, sizeof(char));
+			write(puerto_serial, &bufferWrite, sizeof(char));
 			SDL_Delay(10);
 			bufferWrite = paddle[0].y/2;
-			write(puerto_serial, &buffer, sizeof(char));
+			write(puerto_serial, &bufferWrite, sizeof(char));
 			SDL_Delay(10);
 		}
 
@@ -303,20 +303,20 @@ int main (int argc, char *args[]) {
 			move_paddle(1);
 
 			bufferWrite=0xBB;
-			write(puerto_serial, &buffer, sizeof(char));
+			write(puerto_serial, &bufferWrite, sizeof(char));
 			SDL_Delay(10);
 			bufferWrite = paddle[0].y/2;
-			write(puerto_serial, &buffer, sizeof(char));
+			write(puerto_serial, &bufferWrite, sizeof(char));
 			SDL_Delay(10);
 		}
 		
 		if(FD_ISSET(puerto_serial, &r_set))
 		{
-			read(puerto_serial, &buffer, sizeof(char));
-			if (buffer==0xBB)
+			read(puerto_serial, &bufferRead, sizeof(char));
+			if (bufferRead==0xBB)
 			{
-				read(puerto_serial, &buffer, sizeof(char));
-				paddle[1].y = 2*(int)buffer;
+				read(puerto_serial, &bufferRead, sizeof(char));
+				paddle[1].y = 2*(int)bufferRead;
 			}
 		}
 		//draw background
