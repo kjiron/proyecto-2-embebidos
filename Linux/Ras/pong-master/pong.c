@@ -42,7 +42,8 @@ struct timeval tv;
 
 int TamMsj;
 
-char buffer;
+char bufferRead;
+char bufferWrite;
 
 //--------------------------------------------------------------------------
 
@@ -288,28 +289,29 @@ int main (int argc, char *args[]) {
 		if (keystate[SDL_SCANCODE_DOWN]) {
 			
 			move_paddle(0);
+
+			bufferWrite=0xBB;
+			write(puerto_serial, &buffer, sizeof(char));
+			SDL_Delay(10);
+			bufferWrite = paddle[0].y/2;
+			write(puerto_serial, &buffer, sizeof(char));
+			SDL_Delay(10);
 		}
 
 		if (keystate[SDL_SCANCODE_UP]) {
-			
+
 			move_paddle(1);
+
+			bufferWrite=0xBB;
+			write(puerto_serial, &buffer, sizeof(char));
+			SDL_Delay(10);
+			bufferWrite = paddle[0].y/2;
+			write(puerto_serial, &buffer, sizeof(char));
+			SDL_Delay(10);
 		}
 		
 		if(FD_ISSET(puerto_serial, &r_set))
 		{
-			buffer=0xBB;
-			if(FD_ISSET(puerto_serial, &r_set))
-			{
-				write(puerto_serial, &buffer, sizeof(char));
-			}
-			SDL_Delay(10);
-			if(FD_ISSET(puerto_serial, &r_set))
-			{
-				buffer = paddle[0].y/2;
-				write(puerto_serial, &buffer, sizeof(char));
-			}
-			SDL_Delay(10);
-			
 			read(puerto_serial, &buffer, sizeof(char));
 			if (buffer==0xBB)
 			{
