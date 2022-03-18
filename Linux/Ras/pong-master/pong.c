@@ -347,7 +347,7 @@ int main (int argc, char *args[]) {
 			//draw paddles
 			draw_paddle();
 
-			printf("paddle[0].y = %i \npaddle[1].y = %i \n",paddle[0].y/2,paddle[1].y/2 );
+			//printf("paddle[0].y = %i \npaddle[1].y = %i \n",paddle[0].y/2,paddle[1].y/2 );
 		}
 	
 		SDL_UpdateTexture(screen_texture, NULL, screen->pixels, screen->w * sizeof (Uint32));
