@@ -2,7 +2,7 @@
 
 GIT:
 	git add .
-	git commit -amUpdate
+	git commit -am "Realizando pruebas con el UART"
 	git push
 PC:
 	git stash
