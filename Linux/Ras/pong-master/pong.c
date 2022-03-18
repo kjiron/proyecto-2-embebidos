@@ -144,19 +144,19 @@ static void init_game() {
 	ball.dy = 1;
 	ball.dx = 1;
 	
-	paddle[0].x = 2*3;
-	paddle[0].y = 2*29 ;
-	paddle[0].w = paddles_width;
-	paddle[0].h = paddles_height;
-    paddle[0].dx = 0;
-    paddle[0].dy = 0;
-
-	paddle[1].x = 2*(screen->w - 4);
-	paddle[1].y = 2*29;
+	paddle[1].x = 2*3;
+	paddle[1].y = 2*29 ;
 	paddle[1].w = paddles_width;
 	paddle[1].h = paddles_height;
     paddle[1].dx = 0;
     paddle[1].dy = 0;
+
+	paddle[0].x = 2*(screen->w - 4);
+	paddle[0].y = 2*29;
+	paddle[0].w = paddles_width;
+	paddle[0].h = paddles_height;
+    paddle[0].dx = 0;
+    paddle[0].dy = 0;
 }
 
 static void move_paddle(int d) {
@@ -315,7 +315,15 @@ int main (int argc, char *args[]) {
 			}
 		}
 		
-		
+		if(FD_ISSET(puerto_serial, &r_set))
+		{
+			read(puerto_serial, &buffer, sizeof(char));
+			if (buffer==0xBB)
+			{
+				read(puerto_serial, &buffer, sizeof(char));
+				paddle[1].y = (int)buffer;
+			}
+		}
 		//draw background
 		SDL_RenderClear(renderer);
 		SDL_FillRect(screen, NULL, 0x000000ff);
