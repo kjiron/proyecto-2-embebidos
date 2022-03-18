@@ -318,17 +318,14 @@ int main (int argc, char *args[]) {
 			}
 			SDL_Delay(10);
 		}
-		select(ndfs, &r_set, NULL, NULL, &tv);
 		
-		if(FD_ISSET(puerto_serial, &r_set))
-		{
 			read(puerto_serial, &buffer, sizeof(char));
 			if (buffer==0xBB)
 			{
 				read(puerto_serial, &buffer, sizeof(char));
 				paddle[1].y = 2*(int)buffer;
 			}
-		}
+		
 		//draw background
 		SDL_RenderClear(renderer);
 		SDL_FillRect(screen, NULL, 0x000000ff);
