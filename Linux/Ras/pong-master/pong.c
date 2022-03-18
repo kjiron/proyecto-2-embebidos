@@ -314,7 +314,7 @@ int main (int argc, char *args[]) {
 				write(puerto_serial, &buffer, sizeof(char));
 			}
 		}
-		
+		/*
 		if(FD_ISSET(puerto_serial, &r_set))
 		{
 			read(puerto_serial, &buffer, sizeof(char));
@@ -323,7 +323,7 @@ int main (int argc, char *args[]) {
 				read(puerto_serial, &buffer, sizeof(char));
 				paddle[1].y = (int)buffer;
 			}
-		}
+		}*/
 		//draw background
 		SDL_RenderClear(renderer);
 		SDL_FillRect(screen, NULL, 0x000000ff);
