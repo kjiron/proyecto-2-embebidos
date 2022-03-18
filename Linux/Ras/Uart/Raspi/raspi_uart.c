@@ -99,8 +99,7 @@ int main(int argc, char **argv){
 
 			read(puerto_serial, &buffer, sizeof(char)); // lee el UART y cae sobre buffer
 
-			// TamMsj = write(puerto_serial, seg,strlen(seg));
-			//guarda en TamMsj el tamaño en bytes del write y envia por uart "seg" con tamaño efectivo de "seg"
+			// TamMsj = write(puerto_serial, seg,strlen(seg)); //guarda en TamMsj el tamaño en bytes del write y envia por uart "seg" con tamaño efectivo de "seg"
 
             printf("buffer: %i\n", (int)buffer );// imprime la entrada del UART 
 		

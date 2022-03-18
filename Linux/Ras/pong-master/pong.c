@@ -4,21 +4,58 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#define SCREEN_WIDTH 128	//window height
-#define SCREEN_HEIGHT 64	//window width
+//Includes for UART--------------------------------------------------------
+#include <string.h>
+#include <stdbool.h>
+
+// Linux headers
+#include <fcntl.h> // Contains file controls like O_RDWR
+#include <errno.h> // Error integer and strerror() function
+#include <termios.h> // Contains POSIX terminal control definitions
+#include <unistd.h> // write(), read(), close()
+#include <pthread.h>
+#include <sys/select.h>
+#include <arpa/inet.h> //inet_addr
+//------------------------------------------------------------------------
+
+#define SCREEN_WIDTH 256	//window height
+#define SCREEN_HEIGHT 128	//window width
 
 //function prototypes
 //initilise SDL
 int init(int w, int h, int argc, char *args[]);
 
-typedef struct ball_s {
+typedef struct objeto
+{
+  uint8_t x, y, w, h, dx, dy;
 
-	int x, y; /* position on the screen */
-	int w,h; // ball width and height
-} ball_t;
+} Objeto;
+
+
+//Constants for UART--------------------------------------------------------
+
+int puerto_serial,ndfs;
+
+fd_set all_set, r_set; //file descriptors to use on select()
+
+struct timeval tv;
+
+int TamMsj;
+
+char buffer;
+
+//--------------------------------------------------------------------------
 
 // Program globals
-static ball_t ball;
+static Objeto paddle[2];
+static Objeto ball;
+static Objeto wall;
+uint8_t score[2];
+uint8_t Master;          // 0 if Slave else Master
+uint8_t Multi = 0;           // 0 if single player
+uint8_t paddles_width = 2;
+uint8_t paddles_height = 24;
+uint8_t ball_size = 2;
 int width, height;		//used if fullscreen
 
 SDL_Window* window = NULL;	//The window we'll be rendering to
@@ -34,63 +71,119 @@ static SDL_Surface *end;
 SDL_Texture *screen_texture;
 
 //inisilise starting position and sizes of game elemements
+
+void Serial_activation()
+{
+
+	struct timeval timeout;    
+	timeout.tv_sec = 1;
+	timeout.tv_usec = 0;
+
+	//puerto_serial = open("/dev/ttyUSB0", O_RDWR);  // /dev/ttyS0
+	puerto_serial = open("/dev/ttyS0", O_RDWR);  // /dev/ttyS0
+	ndfs = puerto_serial + 1;
+	
+	//////preparing select()
+	FD_ZERO(&all_set);
+	FD_SET(puerto_serial, &all_set);
+	r_set = all_set;
+	tv.tv_sec = 1; 
+	tv.tv_usec = 0;
+	
+	struct termios tty;
+
+	// Read in existing settings, and handle any error
+	if(tcgetattr(puerto_serial, &tty) != 0) 
+	{
+		printf("Error %i from tcgetattr: %s\n", errno, strerror(errno));
+	}
+
+	tty.c_cflag &= ~PARENB; // Clear parity bit, disabling parity (most common)
+	tty.c_cflag &= ~CSTOPB; // Clear stop field, only one stop bit used in communication (most common)
+	tty.c_cflag |= CS8; // 8 bits per byte (most common)
+	tty.c_cflag &= ~CRTSCTS; // Disable RTS/CTS hardware flow control (most common)
+	tty.c_cflag |= CREAD | CLOCAL; // Turn on READ & ignore ctrl lines (CLOCAL = 1)
+
+	tty.c_lflag &= ~ICANON;
+	tty.c_lflag &= ~ECHO; // Disable echo
+	tty.c_lflag &= ~ECHOE; // Disable erasure
+	tty.c_lflag &= ~ECHONL; // Disable new-line echo
+	tty.c_lflag &= ~ISIG; // Disable interpretation of INTR, QUIT and SUSP
+	tty.c_iflag &= ~(IXON | IXOFF | IXANY); // Turn off s/w flow ctrl
+	tty.c_iflag &= ~(IGNBRK|BRKINT|PARMRK|ISTRIP|INLCR|IGNCR|ICRNL); // Disable any special handling of received bytes
+
+	tty.c_oflag &= ~OPOST; // Prevent special interpretation of output bytes (e.g. newline chars)
+	tty.c_oflag &= ~ONLCR; // Prevent conversion of newline to carriage return/line feed
+	// tty.c_oflag &= ~OXTABS; // Prevent conversion of tabs to spaces (NOT PRESENT ON LINUX)
+	// tty.c_oflag &= ~ONOEOT; // Prevent removal of C-d chars (0x004) in output (NOT PRESENT ON LINUX)
+
+	tty.c_cc[VTIME] = 1;    // Wait for up to 1s (10 deciseconds), returning as soon as any data is received.
+	tty.c_cc[VMIN] = 20;
+
+	cfsetispeed(&tty, B9600);
+	cfsetospeed(&tty, B9600);
+
+	if (tcsetattr(puerto_serial, TCSANOW, &tty) != 0) 
+	{
+		printf("Error %i from tcsetattr: %s\n", errno, strerror(errno));
+	}
+
+}
+
 static void init_game() {
 	
+	wall.x = 0;
+	wall.y = 8;
+	wall.w = 126;
+	wall.h = 54;
+
 	ball.x = screen->w / 2;
 	ball.y = screen->h / 2;
-	ball.w = 1;
-	ball.h = 1;
+	ball.w = 10;
+	ball.h = 10;
+	ball.dy = 1;
+	ball.dx = 1;
+	
+	paddle[0].x = 2*3;
+	paddle[0].y = 2*29 ;
+	paddle[0].w = paddles_width;
+	paddle[0].h = paddles_height;
+    paddle[0].dx = 0;
+    paddle[0].dy = 0;
+
+	paddle[1].x = 2*(screen->w - 4);
+	paddle[1].y = 2*29;
+	paddle[1].w = paddles_width;
+	paddle[1].h = paddles_height;
+    paddle[1].dx = 0;
+    paddle[1].dy = 0;
 }
 
 static void move_paddle(int d) {
 
 	// if the down arrow is pressed move paddle down
 	if (d == 0) {
-
-		if(ball.y <= 0) {
 		
-			ball.y = 0;
-
-		} else {
+		if(paddle[0].y >= 2*(wall.h - 5)) {
 		
-			ball.y -= 1;
+			paddle[0].y = 2*(wall.h - 5);
+		
+		} else { 
+		
+			paddle[0].y += 2;
 		}
 	}
 	
 	// if the up arrow is pressed move paddle up
 	if (d == 1) {
 
-		if(ball.x >= screen->w - ball.w) {
+		if(paddle[0].y <= 2*(wall.y + 1)) {
 		
-			ball.x = screen->w - ball.w;
+			paddle[0].y = 2*(wall.y + 1);
 
 		} else {
 		
-			ball.x += 1;
-		}
-	}
-	
-	if (d == 2) {
-		
-		if(ball.y >= screen->h - ball.h) {
-		
-			ball.y = screen->h - ball.h;
-		
-		} else { 
-		
-			ball.y += 1;
-		}
-	}
-
-	if (d == 3) {
-
-		if(ball.x <= 0) {
-		
-			ball.x = 0;
-
-		} else {
-		
-			ball.x -= 1;
+			paddle[0].y -= 2;
 		}
 	}
 }
@@ -132,8 +225,31 @@ static void draw_ball() {
 	}
 }
 
-int main (int argc, char *args[]) {
+static void draw_paddle() {
+
+	SDL_Rect src;
+	int i;
+
+	for (i = 0; i < 2; i++) {
+	
+		src.x = paddle[i].x;
+		src.y = paddle[i].y;
+		src.w = paddle[i].w;
+		src.h = paddle[i].h;
+	
+		int r = SDL_FillRect(screen, &src, 0xffffffff);
 		
+		if (r !=0){
+		
+			printf("fill rectangle faliled in func draw_paddle()");
+		}
+	}
+}
+
+int main (int argc, char *args[]) {
+	
+	Serial_activation();
+
 	//SDL Window setup
 	if (init(SCREEN_WIDTH, SCREEN_HEIGHT, argc, args) == 1) {
 		
@@ -154,6 +270,10 @@ int main (int argc, char *args[]) {
 	//render loop
 	while(quit == 0) {
 	
+		r_set = all_set;
+        tv.tv_usec = 100000;
+
+		select(ndfs, &r_set, NULL, NULL, &tv);
 		//check for new events every frame
 		SDL_PumpEvents();
 
@@ -164,24 +284,33 @@ int main (int argc, char *args[]) {
 			quit = 1;
 		}
 		
-		if (keystate[SDL_SCANCODE_UP]) {
-			
-			move_paddle(0);
-		}
-
-		if (keystate[SDL_SCANCODE_RIGHT]) {
-			
-			move_paddle(1);
-		}
-
+		
 		if (keystate[SDL_SCANCODE_DOWN]) {
 			
-			move_paddle(2);
+			buffer=0xBB;
+			if(FD_ISSET(puerto_serial, &r_set))
+			{
+				write(puerto_serial, &buffer, sizeof(char));
+			}
+			move_paddle(0);
+			if(FD_ISSET(puerto_serial, &r_set))
+			{
+				write(puerto_serial, &paddle[0].y, sizeof(char));
+			}
 		}
 
-		if (keystate[SDL_SCANCODE_LEFT]) {
+		if (keystate[SDL_SCANCODE_UP]) {
 			
-			move_paddle(3);
+			buffer=0xBB;
+			if(FD_ISSET(puerto_serial, &r_set))
+			{
+				write(puerto_serial, &buffer, sizeof(char));
+			}
+			move_paddle(1);
+			if(FD_ISSET(puerto_serial, &r_set))
+			{
+				write(puerto_serial, &paddle[0].y, sizeof(char));
+			}
 		}
 		
 		
@@ -210,8 +339,10 @@ int main (int argc, char *args[]) {
 		//display the game
 		} else if (state == 1) {
 			
-			//* Put the ball on the screen.
-			draw_ball();
+			//draw paddles
+			draw_paddle();
+
+			printf("paddle[0].y = %i \npaddle[1].y = %i \n",paddle[0].y/2,paddle[1].y/2 );
 		}
 	
 		SDL_UpdateTexture(screen_texture, NULL, screen->pixels, screen->w * sizeof (Uint32));
