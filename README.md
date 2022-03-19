@@ -5,6 +5,12 @@
 - [x] [time](/timerDBG.c) esta hecho por interrupción, hay que ver si da problema con el UART. Lo mejor sería implementar la función milis() para no tener 500ms quemados. 
 - [x] [hit](/hit.h) se detecta colision con el player y se reinicia en su posicion inicial.
 - [x] [moveAI](/hit.h) la AI no es la mejor del mundo pero funciona.
+- [] recv posicion
+- [] recv time
+- [] recv score
+- [] recv collision
+- [] enviar por Uart posicion
+- [] sincronizar
 - [] read another key
 
 ## ToDo RBrenes
