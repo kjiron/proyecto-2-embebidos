@@ -7,6 +7,7 @@
 #define TITLE           0
 #define MENU            1
 #define ONEPLAYER       2
+#define MULTIPLAYER     3
 
 uint8_t timeFlag    = 0;
 uint8_t contador_ms = 0;
@@ -129,6 +130,7 @@ void main() {
             break;
         
         case ONEPLAYER:
+            init_game();
             draw_clear();
             draw_score(scoreA, scoreB);
             while (1)
@@ -169,6 +171,47 @@ void main() {
             
             break;
 
+        case MULTIPLAYER:
+            init_game();
+            draw_clear();
+            draw_score(scoreA, scoreB);
+            while (1)
+            {
+                //aqui verifico si el tiempo se acabo, reinicia todo y lanza un frame
+                updateGameTime(&timer);
+                if (state == MENU)
+                {
+                    draw_clear();
+                    break;
+                }
+                //en move_player actualizo score ya que muevo el player ahi tambien
+                playerOne = move_player(playerOne, m);
+                environment(m);
+                playerPC = move_ai(playerPC, m);
+
+                
+
+                //draw_dot(playerPC, DRAW);
+                draw_box(timer, DRAW);
+                draw_partial_image(playerPC.rect, ship);
+                draw_partial_image(playerOne.rect, ship);
+                for (i = 0; i <= NUM_ASTEROIDS - 1; i++){
+                    draw_horizontal_line(m[i], DRAW);
+                }
+                Delay_ms(60);
+                for (i = 0; i <= NUM_ASTEROIDS - 1; i++){
+                    draw_horizontal_line(m[i], ERASE);
+                }
+                draw_box(timer, ERASE);
+                draw_partial_image(playerOne.rect, parche);
+                draw_partial_image(playerPC.rect, parche);
+                //draw_dot(playerPC, ERASE);
+
+                
+                
+            }
+            
+            break;
 
         default:
             break;
