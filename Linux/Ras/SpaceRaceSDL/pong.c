@@ -66,9 +66,13 @@ SDL_Renderer *renderer;		//The renderer SDL will use to draw to the screen
 
 //surfaces
 static SDL_Surface *screen;
-static SDL_Surface *title;
-static SDL_Surface *numbermap;
-static SDL_Surface *end;
+static SDL_Surface *pantallaDeInicio;
+static SDL_Surface *seleccionDeJuego;
+static SDL_Surface *ship;
+static SDL_Surface *winScreen;
+static SDL_Surface *loseScreen;
+static SDL_Surface *parche;
+
 
 //textures
 SDL_Texture *screen_texture;
@@ -135,31 +139,31 @@ void Serial_activation()
 
 static void init_game() {
 	
-	wall.x = scale_x*0;
-	wall.y = scale_y*8;
-	wall.w = scale_x*126;
-	wall.h = scale_y*54;
+		wall.x = scale_x*0;
+		wall.y = scale_y*8;
+		wall.w = scale_x*126;
+		wall.h = scale_y*54;
 
-	ball.x = screen->w / 2;
-	ball.y = screen->h / 2;
-	ball.w = 10;
-	ball.h = 10;
-	ball.dy = 1;
-	ball.dx = 1;
-	
-	paddle[1].x = scale_x*3;
-	paddle[1].y = scale_y*29 ;
-	paddle[1].w = scale_x*paddles_width;
-	paddle[1].h = scale_y*paddles_height;
-    paddle[1].dx = 0;
-    paddle[1].dy = 0;
+		ball.x = screen->w / 2;
+		ball.y = screen->h / 2;
+		ball.w = 10;
+		ball.h = 10;
+		ball.dy = 1;
+		ball.dx = 1;
 
-	paddle[0].x = (screen->w - scale_x*4);
-	paddle[0].y = scale_y*29;
-	paddle[0].w = scale_x*paddles_width;
-	paddle[0].h = scale_y*paddles_height;
-    paddle[0].dx = 0;
-    paddle[0].dy = 0;
+		paddle[1].x = scale_x*3;
+		paddle[1].y = scale_y*29 ;
+		paddle[1].w = scale_x*paddles_width;
+		paddle[1].h = scale_y*paddles_height;
+		paddle[1].dx = 0;
+		paddle[1].dy = 0;
+
+		paddle[0].x = (screen->w - scale_x*16);
+		paddle[0].y = scale_y*29;
+		paddle[0].w = scale_x*paddles_width;
+		paddle[0].h = scale_y*paddles_height;
+		paddle[0].dx = 0;
+		paddle[0].dy = 0;
 }
 
 static void move_paddle(int d) {
@@ -230,9 +234,11 @@ static void draw_ball() {
 	}
 }
 
+
 static void draw_paddle() {
 
 	SDL_Rect src;
+	SDL_Rect dest;
 	int i;
 
 	for (i = 0; i < 2; i++) {
@@ -242,7 +248,7 @@ static void draw_paddle() {
 		src.w = paddle[i].w;
 		src.h = paddle[i].h;
 	
-		int r = SDL_FillRect(screen, &src, 0xffffffff);
+		int r = SDL_BlitSurface(ship, NULL,screen,&src);
 		
 		if (r !=0){
 		
@@ -250,6 +256,31 @@ static void draw_paddle() {
 		}
 	}
 }
+
+void draw_on_SDL_screen(SDL_Surface *temp) {
+
+	SDL_Surface *temp2 = temp;
+	SDL_Rect src;
+	SDL_Rect dest;
+
+	src.x = 0;
+	src.y = 0;
+	src.w = temp->w;
+	src.h = temp->h;
+
+	dest.x = (screen->w / 2) - (src.w / 2);
+	dest.y = (screen->h / 2) - (src.h / 2);
+	dest.w = temp->w;
+	dest.h = temp->h;
+	
+
+	if (SDL_BlitSurface(temp, &src, screen, &dest))
+	{
+		printf("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
+	}
+}
+
+
 
 int main (int argc, char *args[]) {
 	
@@ -265,7 +296,7 @@ int main (int argc, char *args[]) {
 	
 	int sleep = 0;
 	int quit = 0;
-	int state = 1;
+	int state = 0;
 	int r = 0;
 	Uint32 next_game_tick = SDL_GetTicks();
 	
@@ -276,7 +307,7 @@ int main (int argc, char *args[]) {
 	while(quit == 0) {
 	
 		r_set = all_set;
-        tv.tv_usec = 100000;
+    tv.tv_usec = 100000;
 
 		select(ndfs, &r_set, NULL, NULL, &tv);
 		//check for new events every frame
@@ -334,6 +365,9 @@ int main (int argc, char *args[]) {
 				
 				state = 1;
 			}
+
+			//draw menu 
+			draw_on_SDL_screen(loseScreen);
 		
 		//display gameover
 		} else if (state == 2) {
@@ -349,6 +383,7 @@ int main (int argc, char *args[]) {
 		} else if (state == 1) {
 			
 			//draw paddles
+
 			draw_paddle();
 
 			//printf("paddle[0].y = %i \npaddle[1].y = %i \n",paddle[0].y/2,paddle[1].y/2 );
@@ -372,9 +407,12 @@ int main (int argc, char *args[]) {
 
 	//free loaded images
 	SDL_FreeSurface(screen);
-	SDL_FreeSurface(title);
-	SDL_FreeSurface(numbermap);
-	SDL_FreeSurface(end);
+	SDL_FreeSurface(pantallaDeInicio);
+	SDL_FreeSurface(seleccionDeJuego);
+	SDL_FreeSurface(ship);
+	SDL_FreeSurface(winScreen);
+	SDL_FreeSurface(loseScreen);
+	SDL_FreeSurface(parche);
 
 	//free renderer and all textures used with it
 	SDL_DestroyRenderer(renderer);
@@ -441,40 +479,67 @@ int init(int width, int height, int argc, char *args[]) {
 		return 1;
 	}
 
-	//Load the title image
-	title = SDL_LoadBMP("title.bmp");
+	//Load the pantallaDeInicio image
+	pantallaDeInicio = SDL_LoadBMP("res/pantallaDeInicio.bmp");
 
-	if (title == NULL) {
+	if (pantallaDeInicio == NULL) {
 		
-		printf("Could not Load title image! SDL_Error: %s\n", SDL_GetError());
+		printf("Could not Load pantallaDeInicio image! SDL_Error: %s\n", SDL_GetError());
 
 		return 1;
 	}
 	
-	//Load the numbermap image
-	numbermap = SDL_LoadBMP("numbermap.bmp");
+	//Load the seleccionDeJuego image
+	seleccionDeJuego = SDL_LoadBMP("res/seleccionDeJuego.bmp");
 
-	if (numbermap == NULL) {
+	if (seleccionDeJuego == NULL) {
 		
-		printf("Could not Load numbermap image! SDL_Error: %s\n", SDL_GetError());
+		printf("Could not Load seleccionDeJuego image! SDL_Error: %s\n", SDL_GetError());
+
+		return 1;
+	}
+	//Load the ship image
+	ship = SDL_LoadBMP("res/ship.bmp");
+
+	if (ship == NULL) {
+		
+		printf("Could not Load pantallaDeInicio image! SDL_Error: %s\n", SDL_GetError());
+
+		return 1;
+	}
+	//Load the win image
+	winScreen = SDL_LoadBMP("res/winScreen.bmp");
+
+	if (winScreen == NULL) {
+		
+		printf("Could not Load pantallaDeInicio image! SDL_Error: %s\n", SDL_GetError());
 
 		return 1;
 	}
 	
-	//Load the gameover image
-	end = SDL_LoadBMP("gameover.bmp");
+	//Load the lose image
+	loseScreen = SDL_LoadBMP("res/loseScreen.bmp");
 
-	if (end == NULL) {
+	if (loseScreen == NULL) {
 		
-		printf("Could not Load title image! SDL_Error: %s\n", SDL_GetError());
+		printf("Could not Load pantallaDeInicio image! SDL_Error: %s\n", SDL_GetError());
+
+		return 1;
+	}
+	//Load the parche image
+	parche = SDL_LoadBMP("res/parche.bmp");
+
+	if (parche == NULL) {
+		
+		printf("Could not Load pantallaDeInicio image! SDL_Error: %s\n", SDL_GetError());
 
 		return 1;
 	}
 	
-	// Set the title colourkey. 
-	Uint32 colorkey = SDL_MapRGB(title->format, 255, 0, 255);
-	SDL_SetColorKey(title, SDL_TRUE, colorkey);
-	SDL_SetColorKey(numbermap, SDL_TRUE, colorkey);
+	// Set the pantallaDeInicio colourkey. 
+	Uint32 colorkey = SDL_MapRGB(pantallaDeInicio->format, 255, 0, 255);
+	SDL_SetColorKey(pantallaDeInicio, SDL_TRUE, colorkey);
+	SDL_SetColorKey(seleccionDeJuego, SDL_TRUE, colorkey);
 	
 	return 0;
 }
