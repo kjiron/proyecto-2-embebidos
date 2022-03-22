@@ -19,4 +19,6 @@
 - [x] dibujar/mover pixel en SDL
 - [x] mover pixel de placa desde PC
 - [x] mover pixel de PC desde placa
-
+- [] Traducir las imagenes del SpaceRace a SDL2 en 1280x640
+- [] Traducir las funciones de PIC a SDL
+- [] Implementar el modo de Single Player a SDL2.
