@@ -2,7 +2,7 @@
 
 GIT:
 	git add .
-	git commit -am "Realizando pruebas con el UART"
+	git commit -am "Creando el ambiente en SDL2"
 	git push
 PC:
 	git stash
