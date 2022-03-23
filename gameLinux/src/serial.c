@@ -1,7 +1,8 @@
 #include "serial.h"
 
-
-
+int puerto_serial, ndfs;
+fd_set all_set, r_set;
+struct timeval tv;
 
 void Serial_Init(unsigned int b)
 {
@@ -52,6 +53,9 @@ void Serial_Init(unsigned int b)
 
 	cfsetispeed(&tty, b);
 	cfsetospeed(&tty, b);
+
+	sleep(1);
+	tcflush(puerto_serial, TCIOFLUSH);
 
 	if (tcsetattr(puerto_serial, TCSANOW, &tty) != 0) 
 	{

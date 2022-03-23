@@ -5,6 +5,10 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include <unistd.h>
+#include <termios.h>
+#include <sys/ioctl.h>
+#include <time.h>
 //------------------------------------------------------------------------
 
 #define SCREEN_WIDTH 128	//window height
@@ -19,11 +23,22 @@ int init(int w, int h, int argc, char *args[]);
 typedef struct 
 {
   uint8_t x, y, w, h;
-
 } Rect;
 
-//Constants for UART--------------------------------------------------------
 
+typedef struct 
+{
+  uint8_t dx, dy;
+} Vec2;
+
+typedef struct 
+{
+  Rect rect;
+  Vec2 vel;
+} Splite;
+
+
+//Constants for UART--------------------------------------------------------
 
 uint16_t bufferRead;
 uint16_t bufferWrite;
@@ -32,8 +47,12 @@ uint16_t bufferWrite;
 
 // Program globals
 
-Rect playerOne, playerTwo;
+uint8_t whoAmI;
+Splite playerOne, playerTwo, lastPosPlayer, newPlayer;
 uint16_t SendPlayer = 0x9669;
+uint16_t IamPlayer1 = 0x9666;
+uint16_t IamPlayer2 = 0x9667;
+
 int width, height;		//used if fullscreen
 
 SDL_Window* window = NULL;	//The window we'll be rendering to
@@ -50,33 +69,211 @@ SDL_Texture *screen_texture;
 
 
 
-static void init_game() {
-	playerOne.x = 94;
-	playerOne.y = 55;
-	playerOne.w = 1;
-	playerOne.h = 1;
-
-
-	playerTwo.x = 32;
-	playerTwo.y = 55;
-	playerTwo.w = 1;
-	playerTwo.h = 1;
+bool isPlayerNeedSend(Splite player) {
+    if (player.rect.y != lastPosPlayer.rect.y) {
+        lastPosPlayer = player;
+        return true;
+    }
+    return false;
 }
 
 
-static void move_player(int d) {
 
-	// if the down arrow is pressed move paddle down
-	if (d == 0) {
-		
-		playerOne.y++;
-	}
-	
-	// if the up arrow is pressed move paddle up
-	if (d == 1) {
+/* 
+intenta obtener player durante 1s
+return 
+    0, 1, 2
+*/
+int recvPlayer() {
+    int i = 0, n;
+    uint16_t mark;
+    while (1)
+    {
+		//lee la cantidad de bytes en el puerto serial
+        ioctl(puerto_serial, FIONREAD, &n);
 
-		playerOne.y--;
+        if (n >= 2) {
+            Serial_Read(&mark, 2);
+            if (mark == IamPlayer1) {
+                return 1;
+            }
+            if (mark == IamPlayer2) {
+                return 2;
+            }
+
+            // esto nunca deberia de pasar
+        }
+
+        if (i == 5) {
+            return 0;
+        }
+        i++;
+        usleep(200);
+    }
+    
+}
+
+/*
+sincroniza toda la ostia
+return 
+    1, 2
+*/
+
+int syncPlayer() {
+    int player;
+
+	//limpia el buffer del puerto serial
+	usleep(20);
+    tcflush(puerto_serial, TCIOFLUSH);
+
+    while (1)
+    {
+        player = recvPlayer();
+        if (player == 1) {
+            Serial_Write(&IamPlayer2, 2);
+            return 2;
+        }
+        if (player == 2) {
+            return 1;
+        }
+        Serial_Write(&IamPlayer1, 2);
+    }
+}
+
+Splite moveAnother(Splite s) {
+    return newPlayer;
+}
+
+
+void forceSendPlayer() {
+
+    if (whoAmI == 1) {
+
+        if (isPlayerNeedSend(playerOne) || 1) {
+            Serial_Write(&SendPlayer, 2);
+            Serial_Write(&playerOne, sizeof(Splite));                
+        }
+
+    }
+    if (whoAmI == 2) {
+        if (isPlayerNeedSend(playerTwo) || 1) {
+            Serial_Write(&SendPlayer, 2);
+            Serial_Write(&playerTwo, sizeof(Splite));                
+        }
+    }
+
+}
+
+
+
+void updateData() {
+    int n, amount;
+    uint16_t mark;
+
+    while (1)
+    {
+		n = select(ndfs, &r_set, NULL, NULL, &tv);
+		if (n < 0)
+		{
+			printf("select fallo");
+		}
+		else if (n == 0)
+		{
+			printf("TIMEOUT");
+		}
+
+		else
+		{
+			//leo los bytes
+
+			/*
+			if (ioctl(puerto_serial, FIONREAD, &amount) == -1)
+			{
+				printf("Erros leyendos los bytes\n");
+			}
+			
+			
+			
+			if (amount >= (2 + sizeof(Splite)))
+			{
+				//read(puerto_serial, &bufferRead, sizeof(int16_t));
+				Serial_Read(&mark, 2);
+				
+				if (mark == SendPlayer)
+				{
+					Serial_Read(&newPlayer, sizeof(Splite));
+					printf("newPlayer : {%d}, {%d}, {%d}, {%d}\n", newPlayer.rect.x, newPlayer.rect.y, newPlayer.rect.w, newPlayer.rect.h);
+					continue;
+				}
+
+				//limpia el buffer del puerto serial
+				usleep(10);
+				tcflush(puerto_serial, TCIOFLUSH);
+			}
+			*/
+
+			if(FD_ISSET(puerto_serial, &r_set))
+			{
+				//read(puerto_serial, &bufferRead, sizeof(int16_t));
+				Serial_Read(&bufferRead, 2);
+				
+				if (bufferRead == SendPlayer)
+				{
+					Serial_Read(&newPlayer, sizeof(Splite));
+					printf("newPlayer : {%d}, {%d}, {%d}, {%d}\n", newPlayer.rect.x, newPlayer.rect.y, newPlayer.rect.w, newPlayer.rect.h);
+				}
+
+				
+			}
+
+
+
+		}
+
+		return;
+    }
+
+}
+
+
+
+static void init_game() {
+	playerOne.rect.x = 32;
+	playerOne.rect.y = 55;
+	playerOne.rect.w = 9;
+	playerOne.rect.h = 9;
+	playerOne.vel.dx = 0;
+	playerOne.vel.dy = 1;
+
+
+
+	playerTwo.rect.x = 94;
+	playerTwo.rect.y = 55;
+	playerTwo.rect.w = 9;
+	playerTwo.rect.h = 9;
+	playerTwo.vel.dx = 0;
+	playerTwo.vel.dy = 1;
+
+}
+
+
+Splite move_player(Splite p) {
+	const uint8_t *key = SDL_GetKeyboardState(NULL);
+
+
+	if (key[SDL_SCANCODE_DOWN])
+	{
+		p.rect.y++;
+		SDL_Delay(30);
 	}
+
+	if (key[SDL_SCANCODE_UP])
+	{
+		p.rect.y--;
+		SDL_Delay(30);
+	}
+
+	return p;
 
 }
 
@@ -85,15 +282,15 @@ static void draw_pixel() {
 
 	SDL_Rect srcOne, srcTwo;
 	
-	srcOne.x = playerOne.x;
-	srcOne.y = playerOne.y;
-	srcOne.w = playerOne.w;
-	srcOne.h = playerOne.h;
+	srcOne.x = playerOne.rect.x;
+	srcOne.y = playerOne.rect.y;
+	srcOne.w = playerOne.rect.w;
+	srcOne.h = playerOne.rect.h;
 
-	srcTwo.x = playerTwo.x;
-	srcTwo.y = playerTwo.y;
-	srcTwo.w = playerTwo.w;
-	srcTwo.h = playerTwo.h;
+	srcTwo.x = playerTwo.rect.x;
+	srcTwo.y = playerTwo.rect.y;
+	srcTwo.w = playerTwo.rect.w;
+	srcTwo.h = playerTwo.rect.h;
 
 	int r = SDL_FillRect(screen, &srcOne, 0xffffffff);
 	int a = SDL_FillRect(screen, &srcTwo, 0xffffffff);
@@ -112,34 +309,38 @@ static void draw_pixel() {
 
 int main (int argc, char *args[]) {
 	
-	//Serial_activation();
-	//printf("hola12313\n");
+	int sleep_sdl = 0;
+	int quit = 0;
+	int state = 1;
+	int r = 0;
+	int n = 0;
+
+
 	Serial_Init(B9600);
 	//SDL Window setup
 	if (init(SCREEN_WIDTH, SCREEN_HEIGHT, argc, args) == 1) {
 		
 		return 0;
 	}
-	
 	SDL_GetWindowSize(window, &width, &height);
-	
-	int sleep = 0;
-	int quit = 0;
-	int state = 1;
-	int r = 0;
 	Uint32 next_game_tick = SDL_GetTicks();
 	
 	init_game();
-
+	whoAmI = syncPlayer();
+	//limpia el buffer del puerto serial
+	usleep(20);
+    tcflush(puerto_serial, TCIOFLUSH);
+	usleep(2000);
+	//sleep(2);
+	forceSendPlayer();
 
 	while (quit == 0)
 	{
-		//printf("asdasd\n");
 		
 		r_set = all_set;
         tv.tv_usec = 100000;
 
-		select(ndfs, &r_set, NULL, NULL, &tv);
+		
 		SDL_PumpEvents();
 
 		const Uint8 *keystate = SDL_GetKeyboardState(NULL);
@@ -149,14 +350,42 @@ int main (int argc, char *args[]) {
 			quit = 1;
 		}
 
-	
+
+		updateData();
+
+		if (whoAmI == 1)
+		{
+			playerTwo = moveAnother(playerTwo);
+			playerOne = move_player(playerOne);
+
+			if (isPlayerNeedSend(playerOne)) {
+				Serial_Write(&SendPlayer, 2);
+				Serial_Write(&playerOne, sizeof(Splite));                
+			}
+		}
+
+		if (whoAmI == 2)
+		{
+			playerOne = moveAnother(playerOne);
+			playerTwo = move_player(playerTwo);
+
+			if (isPlayerNeedSend(playerTwo)) {
+				Serial_Write(&SendPlayer, 2);
+				Serial_Write(&playerTwo, sizeof(Splite));                
+			}
+		}
+		
+		
+
+
+		/*
 
 		if (keystate[SDL_SCANCODE_DOWN]) {
 			
 			move_player(0);
 			Serial_Write(&SendPlayer, 2);
 			SDL_Delay(30);
-			Serial_Write(&playerOne, sizeof(Rect));
+			Serial_Write(&playerOne, sizeof(Splite));
 			SDL_Delay(30);
 		}
 
@@ -165,22 +394,39 @@ int main (int argc, char *args[]) {
 			move_player(1);
 			Serial_Write(&SendPlayer, 2);
 			SDL_Delay(30);
-			Serial_Write(&playerOne, sizeof(Rect));
+			Serial_Write(&playerOne, sizeof(Splite));
 			SDL_Delay(30);
 		}
-
-
-		if(FD_ISSET(puerto_serial, &r_set))
+		
+		//n mayor a cero significa que hay datos pendientes o fd
+		n = select(ndfs, &r_set, NULL, NULL, &tv);
+		if (n < 0)
 		{
-			//read(puerto_serial, &bufferRead, sizeof(int16_t));
-			Serial_Read(&bufferRead, 2);
-			
-			if (bufferRead == SendPlayer)
+			printf("select fallo");
+		}
+		else if (n == 0)
+		{
+			printf("TIMEOUT");
+		}
+
+		else
+		{
+			if(FD_ISSET(puerto_serial, &r_set))
 			{
-				Serial_Read(&playerTwo, sizeof(Rect));
-				printf("Player One : {%d}, {%d}, {%d}, {%d}\n", playerTwo.x, playerTwo.y, playerTwo.w, playerTwo.h);
+				//read(puerto_serial, &bufferRead, sizeof(int16_t));
+				Serial_Read(&bufferRead, 2);
+				
+				if (bufferRead == SendPlayer)
+				{
+					Serial_Read(&playerTwo, sizeof(Splite));
+					printf("Player One : {%d}, {%d}, {%d}, {%d}\n", playerTwo.rect.x, playerTwo.rect.y, playerTwo.rect.w, playerTwo.rect.h);
+				}
 			}
 		}
+		*/
+		
+
+		
 
 
 
@@ -194,11 +440,11 @@ int main (int argc, char *args[]) {
 		//draw to the display
 		SDL_RenderPresent(renderer);
 		next_game_tick += 1000 / 60;
-		sleep = next_game_tick - SDL_GetTicks();
+		sleep_sdl = next_game_tick - SDL_GetTicks();
 	
-		if( sleep >= 0 ) {
+		if( sleep_sdl >= 0 ) {
             				
-			SDL_Delay(sleep);
+			SDL_Delay(sleep_sdl);
 		}
 
 	}
