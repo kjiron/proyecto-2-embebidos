@@ -10,8 +10,8 @@
 - [] recv score
 - [] recv collision
 - [x] enviar por Uart posicion
-- [] sincronizar
-- [] read another key
+- [x] sincronizar, hay un pequeño bug, el cual es que muetra el player que lee por UART solo hasta que del otro lado se hizo un movimiento con el teclado.
+- [x] read another key
 
 ## ToDo RBrenes
 
