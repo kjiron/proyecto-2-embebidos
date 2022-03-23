@@ -398,7 +398,7 @@ L_draw_MenuGame8:
 	XORLW       0
 	BTFSS       STATUS+0, 2 
 	GOTO        L_draw_MenuGame11
-L__draw_MenuGame140:
+L__draw_MenuGame173:
 ;proyecto-2-embebido,99 :: 		
 	CALL        _draw_clear+0, 0
 ;proyecto-2-embebido,100 :: 		
@@ -412,17 +412,17 @@ L_draw_MenuGame11:
 ;proyecto-2-embebido,102 :: 		
 	MOVF        draw_MenuGame_key_L0+0, 1 
 	BTFSS       STATUS+0, 2 
-	GOTO        L__draw_MenuGame139
+	GOTO        L__draw_MenuGame172
 	MOVF        draw_MenuGame_key_L0+1, 1 
 	BTFSS       STATUS+0, 2 
-	GOTO        L__draw_MenuGame139
+	GOTO        L__draw_MenuGame172
 	GOTO        L_draw_MenuGame16
-L__draw_MenuGame139:
+L__draw_MenuGame172:
 	MOVF        FARG_draw_MenuGame_modeGame+0, 0 
 	XORLW       0
 	BTFSS       STATUS+0, 2 
 	GOTO        L_draw_MenuGame16
-L__draw_MenuGame138:
+L__draw_MenuGame171:
 ;proyecto-2-embebido,104 :: 		
 	MOVLW       4
 	MOVWF       R0 
@@ -498,7 +498,7 @@ L_draw_MenuGame16:
 	XORLW       1
 	BTFSS       STATUS+0, 2 
 	GOTO        L_draw_MenuGame22
-L__draw_MenuGame137:
+L__draw_MenuGame170:
 ;proyecto-2-embebido,113 :: 		
 	CALL        _draw_clear+0, 0
 ;proyecto-2-embebido,114 :: 		
@@ -512,17 +512,17 @@ L_draw_MenuGame22:
 ;proyecto-2-embebido,116 :: 		
 	MOVF        draw_MenuGame_key_L0+0, 1 
 	BTFSS       STATUS+0, 2 
-	GOTO        L__draw_MenuGame136
+	GOTO        L__draw_MenuGame169
 	MOVF        draw_MenuGame_key_L0+1, 1 
 	BTFSS       STATUS+0, 2 
-	GOTO        L__draw_MenuGame136
+	GOTO        L__draw_MenuGame169
 	GOTO        L_draw_MenuGame27
-L__draw_MenuGame136:
+L__draw_MenuGame169:
 	MOVF        FARG_draw_MenuGame_modeGame+0, 0 
 	XORLW       1
 	BTFSS       STATUS+0, 2 
 	GOTO        L_draw_MenuGame27
-L__draw_MenuGame135:
+L__draw_MenuGame168:
 ;proyecto-2-embebido,118 :: 		
 	MOVLW       4
 	MOVWF       R0 
@@ -750,10 +750,10 @@ main_check_collision00:
 	XORWF       R2, 0 
 	SUBWF       R0, 0 
 	BTFSS       STATUS+0, 2 
-	GOTO        L_main_check_collision00158
+	GOTO        L_main_check_collision00191
 	MOVF        R1, 0 
 	SUBWF       FARG_main_check_collision00_rect1+0, 0 
-L_main_check_collision00158:
+L_main_check_collision00191:
 	BTFSC       STATUS+0, 0 
 	GOTO        L_main_check_collision0032
 	MOVF        FARG_main_check_collision00_rect1+2, 0 
@@ -775,10 +775,10 @@ L_main_check_collision00158:
 	XORWF       R2, 0 
 	SUBWF       R0, 0 
 	BTFSS       STATUS+0, 2 
-	GOTO        L_main_check_collision00159
+	GOTO        L_main_check_collision00192
 	MOVF        R1, 0 
 	SUBWF       FARG_main_check_collision00_rect2+0, 0 
-L_main_check_collision00159:
+L_main_check_collision00192:
 	BTFSC       STATUS+0, 0 
 	GOTO        L_main_check_collision0032
 ;proyecto-2-embebido,21 :: 		
@@ -801,10 +801,10 @@ L_main_check_collision00159:
 	XORWF       R2, 0 
 	SUBWF       R0, 0 
 	BTFSS       STATUS+0, 2 
-	GOTO        L_main_check_collision00160
+	GOTO        L_main_check_collision00193
 	MOVF        R1, 0 
 	SUBWF       FARG_main_check_collision00_rect1+1, 0 
-L_main_check_collision00160:
+L_main_check_collision00193:
 	BTFSC       STATUS+0, 0 
 	GOTO        L_main_check_collision0032
 ;proyecto-2-embebido,22 :: 		
@@ -827,10 +827,10 @@ L_main_check_collision00160:
 	XORWF       R2, 0 
 	SUBWF       R0, 0 
 	BTFSS       STATUS+0, 2 
-	GOTO        L_main_check_collision00161
+	GOTO        L_main_check_collision00194
 	MOVF        R1, 0 
 	SUBWF       FARG_main_check_collision00_rect2+1, 0 
-L_main_check_collision00161:
+L_main_check_collision00194:
 	BTFSC       STATUS+0, 0 
 	GOTO        L_main_check_collision0032
 	MOVLW       1
@@ -945,10 +945,10 @@ L_move_player36:
 	MOVLW       128
 	SUBWF       R0, 0 
 	BTFSS       STATUS+0, 2 
-	GOTO        L__move_player165
+	GOTO        L__move_player198
 	MOVF        move_player_i_L0+0, 0 
 	SUBLW       12
-L__move_player165:
+L__move_player198:
 	BTFSS       STATUS+0, 0 
 	GOTO        L_move_player37
 ;proyecto-2-embebido,45 :: 		
@@ -1064,10 +1064,10 @@ L_move_player37:
 	MOVLW       128
 	SUBWF       R0, 0 
 	BTFSS       STATUS+0, 2 
-	GOTO        L__move_player166
+	GOTO        L__move_player199
 	MOVLW       63
 	SUBWF       R2, 0 
-L__move_player166:
+L__move_player199:
 	BTFSS       STATUS+0, 0 
 	GOTO        L_move_player44
 ;proyecto-2-embebido,61 :: 		
@@ -1199,10 +1199,10 @@ L_move_ai52:
 	MOVLW       128
 	SUBWF       R0, 0 
 	BTFSS       STATUS+0, 2 
-	GOTO        L__move_ai168
+	GOTO        L__move_ai201
 	MOVF        move_ai_i_L0+0, 0 
 	SUBLW       12
-L__move_ai168:
+L__move_ai201:
 	BTFSS       STATUS+0, 0 
 	GOTO        L_move_ai53
 ;proyecto-2-embebido,92 :: 		
@@ -1419,10 +1419,10 @@ L_move_ai64:
 	MOVLW       128
 	SUBWF       R0, 0 
 	BTFSS       STATUS+0, 2 
-	GOTO        L__move_ai169
+	GOTO        L__move_ai202
 	MOVLW       63
 	SUBWF       R2, 0 
-L__move_ai169:
+L__move_ai202:
 	BTFSS       STATUS+0, 0 
 	GOTO        L_move_ai67
 ;proyecto-2-embebido,139 :: 		
@@ -1604,10 +1604,10 @@ L_environment74:
 	MOVLW       128
 	SUBWF       R0, 0 
 	BTFSS       STATUS+0, 2 
-	GOTO        L__environment172
+	GOTO        L__environment205
 	MOVF        R4, 0 
 	SUBLW       12
-L__environment172:
+L__environment205:
 	BTFSS       STATUS+0, 0 
 	GOTO        L_environment75
 ;proyecto-2-embebido,174 :: 		
@@ -1780,54 +1780,471 @@ L_end_environment:
 	RETURN      0
 ; end of _environment
 
+_isPlayerNeedSend:
+
+;main.c,31 :: 		bool isPlayerNeedSend(Splite player) {
+;main.c,32 :: 		if (player.rect.y != lastPosPlayer.rect.y) {
+	MOVF        FARG_isPlayerNeedSend_player+1, 0 
+	XORWF       _lastPosPlayer+1, 0 
+	BTFSC       STATUS+0, 2 
+	GOTO        L_isPlayerNeedSend81
+;main.c,33 :: 		lastPosPlayer = player;
+	MOVLW       6
+	MOVWF       R0 
+	MOVLW       _lastPosPlayer+0
+	MOVWF       FSR1L+0 
+	MOVLW       hi_addr(_lastPosPlayer+0)
+	MOVWF       FSR1L+1 
+	MOVLW       FARG_isPlayerNeedSend_player+0
+	MOVWF       FSR0L+0 
+	MOVLW       hi_addr(FARG_isPlayerNeedSend_player+0)
+	MOVWF       FSR0L+1 
+L_isPlayerNeedSend82:
+	MOVF        POSTINC0+0, 0 
+	MOVWF       POSTINC1+0 
+	DECF        R0, 1 
+	BTFSS       STATUS+0, 2 
+	GOTO        L_isPlayerNeedSend82
+;main.c,34 :: 		return true;
+	MOVLW       1
+	MOVWF       R0 
+	GOTO        L_end_isPlayerNeedSend
+;main.c,35 :: 		}
+L_isPlayerNeedSend81:
+;main.c,36 :: 		return false;
+	CLRF        R0 
+;main.c,37 :: 		}
+L_end_isPlayerNeedSend:
+	RETURN      0
+; end of _isPlayerNeedSend
+
+_recvPlayer:
+
+;main.c,47 :: 		int recvPlayer() {
+;main.c,48 :: 		int i = 0, n;
+	CLRF        recvPlayer_i_L0+0 
+	CLRF        recvPlayer_i_L0+1 
+;main.c,50 :: 		while (1)
+L_recvPlayer83:
+;main.c,52 :: 		n = Serial_available();
+	CALL        _Serial_available+0, 0
+;main.c,53 :: 		if (n >= 2) {
+	MOVLW       128
+	XORWF       R1, 0 
+	MOVWF       R2 
+	MOVLW       128
+	SUBWF       R2, 0 
+	BTFSS       STATUS+0, 2 
+	GOTO        L__recvPlayer208
+	MOVLW       2
+	SUBWF       R0, 0 
+L__recvPlayer208:
+	BTFSS       STATUS+0, 0 
+	GOTO        L_recvPlayer85
+;main.c,54 :: 		Serial_Read(&mark, 2);
+	MOVLW       recvPlayer_mark_L0+0
+	MOVWF       FARG_Serial_Read_buf+0 
+	MOVLW       hi_addr(recvPlayer_mark_L0+0)
+	MOVWF       FARG_Serial_Read_buf+1 
+	MOVLW       2
+	MOVWF       FARG_Serial_Read_n+0 
+	MOVLW       0
+	MOVWF       FARG_Serial_Read_n+1 
+	CALL        _Serial_Read+0, 0
+;main.c,55 :: 		if (mark == IamPlayer1) {
+	MOVF        recvPlayer_mark_L0+1, 0 
+	XORWF       _IamPlayer1+1, 0 
+	BTFSS       STATUS+0, 2 
+	GOTO        L__recvPlayer209
+	MOVF        _IamPlayer1+0, 0 
+	XORWF       recvPlayer_mark_L0+0, 0 
+L__recvPlayer209:
+	BTFSS       STATUS+0, 2 
+	GOTO        L_recvPlayer86
+;main.c,56 :: 		return 1;
+	MOVLW       1
+	MOVWF       R0 
+	MOVLW       0
+	MOVWF       R1 
+	GOTO        L_end_recvPlayer
+;main.c,57 :: 		}
+L_recvPlayer86:
+;main.c,58 :: 		if (mark == IamPlayer2) {
+	MOVF        recvPlayer_mark_L0+1, 0 
+	XORWF       _IamPlayer2+1, 0 
+	BTFSS       STATUS+0, 2 
+	GOTO        L__recvPlayer210
+	MOVF        _IamPlayer2+0, 0 
+	XORWF       recvPlayer_mark_L0+0, 0 
+L__recvPlayer210:
+	BTFSS       STATUS+0, 2 
+	GOTO        L_recvPlayer87
+;main.c,59 :: 		return 2;
+	MOVLW       2
+	MOVWF       R0 
+	MOVLW       0
+	MOVWF       R1 
+	GOTO        L_end_recvPlayer
+;main.c,60 :: 		}
+L_recvPlayer87:
+;main.c,63 :: 		}
+L_recvPlayer85:
+;main.c,65 :: 		if (i == 5) {
+	MOVLW       0
+	XORWF       recvPlayer_i_L0+1, 0 
+	BTFSS       STATUS+0, 2 
+	GOTO        L__recvPlayer211
+	MOVLW       5
+	XORWF       recvPlayer_i_L0+0, 0 
+L__recvPlayer211:
+	BTFSS       STATUS+0, 2 
+	GOTO        L_recvPlayer88
+;main.c,66 :: 		return 0;
+	CLRF        R0 
+	CLRF        R1 
+	GOTO        L_end_recvPlayer
+;main.c,67 :: 		}
+L_recvPlayer88:
+;main.c,68 :: 		i++;
+	INFSNZ      recvPlayer_i_L0+0, 1 
+	INCF        recvPlayer_i_L0+1, 1 
+;main.c,69 :: 		Delay_ms(200);
+	MOVLW       3
+	MOVWF       R11, 0
+	MOVLW       8
+	MOVWF       R12, 0
+	MOVLW       119
+	MOVWF       R13, 0
+L_recvPlayer89:
+	DECFSZ      R13, 1, 1
+	BRA         L_recvPlayer89
+	DECFSZ      R12, 1, 1
+	BRA         L_recvPlayer89
+	DECFSZ      R11, 1, 1
+	BRA         L_recvPlayer89
+;main.c,70 :: 		}
+	GOTO        L_recvPlayer83
+;main.c,72 :: 		}
+L_end_recvPlayer:
+	RETURN      0
+; end of _recvPlayer
+
+_syncPlayer:
+
+;main.c,82 :: 		int syncPlayer() {
+;main.c,84 :: 		Serial_clear();
+	CALL        _Serial_clear+0, 0
+;main.c,86 :: 		while (1)
+L_syncPlayer90:
+;main.c,88 :: 		player = recvPlayer();
+	CALL        _recvPlayer+0, 0
+	MOVF        R0, 0 
+	MOVWF       syncPlayer_player_L0+0 
+	MOVF        R1, 0 
+	MOVWF       syncPlayer_player_L0+1 
+;main.c,89 :: 		if (player == 1) {
+	MOVLW       0
+	XORWF       R1, 0 
+	BTFSS       STATUS+0, 2 
+	GOTO        L__syncPlayer213
+	MOVLW       1
+	XORWF       R0, 0 
+L__syncPlayer213:
+	BTFSS       STATUS+0, 2 
+	GOTO        L_syncPlayer92
+;main.c,90 :: 		Serial_Write(&IamPlayer2, 2);
+	MOVLW       _IamPlayer2+0
+	MOVWF       FARG_Serial_Write_buf+0 
+	MOVLW       hi_addr(_IamPlayer2+0)
+	MOVWF       FARG_Serial_Write_buf+1 
+	MOVLW       2
+	MOVWF       FARG_Serial_Write_n+0 
+	MOVLW       0
+	MOVWF       FARG_Serial_Write_n+1 
+	CALL        _Serial_Write+0, 0
+;main.c,91 :: 		return 2;
+	MOVLW       2
+	MOVWF       R0 
+	MOVLW       0
+	MOVWF       R1 
+	GOTO        L_end_syncPlayer
+;main.c,92 :: 		}
+L_syncPlayer92:
+;main.c,93 :: 		if (player == 2) {
+	MOVLW       0
+	XORWF       syncPlayer_player_L0+1, 0 
+	BTFSS       STATUS+0, 2 
+	GOTO        L__syncPlayer214
+	MOVLW       2
+	XORWF       syncPlayer_player_L0+0, 0 
+L__syncPlayer214:
+	BTFSS       STATUS+0, 2 
+	GOTO        L_syncPlayer93
+;main.c,94 :: 		return 1;
+	MOVLW       1
+	MOVWF       R0 
+	MOVLW       0
+	MOVWF       R1 
+	GOTO        L_end_syncPlayer
+;main.c,95 :: 		}
+L_syncPlayer93:
+;main.c,96 :: 		Serial_Write(&IamPlayer1, 2);
+	MOVLW       _IamPlayer1+0
+	MOVWF       FARG_Serial_Write_buf+0 
+	MOVLW       hi_addr(_IamPlayer1+0)
+	MOVWF       FARG_Serial_Write_buf+1 
+	MOVLW       2
+	MOVWF       FARG_Serial_Write_n+0 
+	MOVLW       0
+	MOVWF       FARG_Serial_Write_n+1 
+	CALL        _Serial_Write+0, 0
+;main.c,97 :: 		}
+	GOTO        L_syncPlayer90
+;main.c,98 :: 		}
+L_end_syncPlayer:
+	RETURN      0
+; end of _syncPlayer
+
+_moveAnother:
+
+;main.c,101 :: 		Splite moveAnother(Splite s) {
+	MOVF        R0, 0 
+	MOVWF       R2 
+	MOVF        R1, 0 
+	MOVWF       R3 
+;main.c,102 :: 		return newPlayer;
+	MOVLW       6
+	MOVWF       R0 
+	MOVF        R2, 0 
+	MOVWF       FSR1L+0 
+	MOVF        R3, 0 
+	MOVWF       FSR1L+1 
+	MOVLW       _newPlayer+0
+	MOVWF       FSR0L+0 
+	MOVLW       hi_addr(_newPlayer+0)
+	MOVWF       FSR0L+1 
+L_moveAnother94:
+	MOVF        POSTINC0+0, 0 
+	MOVWF       POSTINC1+0 
+	DECF        R0, 1 
+	BTFSS       STATUS+0, 2 
+	GOTO        L_moveAnother94
+;main.c,103 :: 		}
+L_end_moveAnother:
+	RETURN      0
+; end of _moveAnother
+
+_forceSendPlayer:
+
+;main.c,105 :: 		void forceSendPlayer() {
+;main.c,107 :: 		if (whoAmI == 1) {
+	MOVF        _whoAmI+0, 0 
+	XORLW       1
+	BTFSS       STATUS+0, 2 
+	GOTO        L_forceSendPlayer95
+;main.c,109 :: 		if (isPlayerNeedSend(playerOne) || 1) {
+	MOVLW       6
+	MOVWF       R0 
+	MOVLW       FARG_isPlayerNeedSend_player+0
+	MOVWF       FSR1L+0 
+	MOVLW       hi_addr(FARG_isPlayerNeedSend_player+0)
+	MOVWF       FSR1L+1 
+	MOVLW       _playerOne+0
+	MOVWF       FSR0L+0 
+	MOVLW       hi_addr(_playerOne+0)
+	MOVWF       FSR0L+1 
+L_forceSendPlayer96:
+	MOVF        POSTINC0+0, 0 
+	MOVWF       POSTINC1+0 
+	DECF        R0, 1 
+	BTFSS       STATUS+0, 2 
+	GOTO        L_forceSendPlayer96
+	CALL        _isPlayerNeedSend+0, 0
+;main.c,110 :: 		Serial_Write(&SendPlayer, 2);
+	MOVLW       _SendPlayer+0
+	MOVWF       FARG_Serial_Write_buf+0 
+	MOVLW       hi_addr(_SendPlayer+0)
+	MOVWF       FARG_Serial_Write_buf+1 
+	MOVLW       2
+	MOVWF       FARG_Serial_Write_n+0 
+	MOVLW       0
+	MOVWF       FARG_Serial_Write_n+1 
+	CALL        _Serial_Write+0, 0
+;main.c,111 :: 		Serial_Write(&playerOne, sizeof(Splite));
+	MOVLW       _playerOne+0
+	MOVWF       FARG_Serial_Write_buf+0 
+	MOVLW       hi_addr(_playerOne+0)
+	MOVWF       FARG_Serial_Write_buf+1 
+	MOVLW       6
+	MOVWF       FARG_Serial_Write_n+0 
+	MOVLW       0
+	MOVWF       FARG_Serial_Write_n+1 
+	CALL        _Serial_Write+0, 0
+;main.c,114 :: 		}
+L_forceSendPlayer95:
+;main.c,115 :: 		if (whoAmI == 2) {
+	MOVF        _whoAmI+0, 0 
+	XORLW       2
+	BTFSS       STATUS+0, 2 
+	GOTO        L_forceSendPlayer98
+;main.c,116 :: 		if (isPlayerNeedSend(playerTwo) || 1) {
+	MOVLW       6
+	MOVWF       R0 
+	MOVLW       FARG_isPlayerNeedSend_player+0
+	MOVWF       FSR1L+0 
+	MOVLW       hi_addr(FARG_isPlayerNeedSend_player+0)
+	MOVWF       FSR1L+1 
+	MOVLW       _playerTwo+0
+	MOVWF       FSR0L+0 
+	MOVLW       hi_addr(_playerTwo+0)
+	MOVWF       FSR0L+1 
+L_forceSendPlayer99:
+	MOVF        POSTINC0+0, 0 
+	MOVWF       POSTINC1+0 
+	DECF        R0, 1 
+	BTFSS       STATUS+0, 2 
+	GOTO        L_forceSendPlayer99
+	CALL        _isPlayerNeedSend+0, 0
+;main.c,117 :: 		Serial_Write(&SendPlayer, 2);
+	MOVLW       _SendPlayer+0
+	MOVWF       FARG_Serial_Write_buf+0 
+	MOVLW       hi_addr(_SendPlayer+0)
+	MOVWF       FARG_Serial_Write_buf+1 
+	MOVLW       2
+	MOVWF       FARG_Serial_Write_n+0 
+	MOVLW       0
+	MOVWF       FARG_Serial_Write_n+1 
+	CALL        _Serial_Write+0, 0
+;main.c,118 :: 		Serial_Write(&playerTwo, sizeof(Splite));
+	MOVLW       _playerTwo+0
+	MOVWF       FARG_Serial_Write_buf+0 
+	MOVLW       hi_addr(_playerTwo+0)
+	MOVWF       FARG_Serial_Write_buf+1 
+	MOVLW       6
+	MOVWF       FARG_Serial_Write_n+0 
+	MOVLW       0
+	MOVWF       FARG_Serial_Write_n+1 
+	CALL        _Serial_Write+0, 0
+;main.c,120 :: 		}
+L_forceSendPlayer98:
+;main.c,122 :: 		}
+L_end_forceSendPlayer:
+	RETURN      0
+; end of _forceSendPlayer
+
+_updateData:
+
+;main.c,125 :: 		void updateData() {
+;main.c,129 :: 		while (1)
+L_updateData101:
+;main.c,132 :: 		n = Serial_available();
+	CALL        _Serial_available+0, 0
+;main.c,133 :: 		if (n >= (2 + sizeof(Splite))) {
+	MOVLW       128
+	XORWF       R1, 0 
+	MOVWF       R2 
+	MOVLW       128
+	XORLW       0
+	SUBWF       R2, 0 
+	BTFSS       STATUS+0, 2 
+	GOTO        L__updateData218
+	MOVLW       8
+	SUBWF       R0, 0 
+L__updateData218:
+	BTFSS       STATUS+0, 0 
+	GOTO        L_updateData103
+;main.c,134 :: 		Serial_Read(&mark, 2);
+	MOVLW       updateData_mark_L0+0
+	MOVWF       FARG_Serial_Read_buf+0 
+	MOVLW       hi_addr(updateData_mark_L0+0)
+	MOVWF       FARG_Serial_Read_buf+1 
+	MOVLW       2
+	MOVWF       FARG_Serial_Read_n+0 
+	MOVLW       0
+	MOVWF       FARG_Serial_Read_n+1 
+	CALL        _Serial_Read+0, 0
+;main.c,136 :: 		if (mark == SendPlayer) {
+	MOVF        updateData_mark_L0+1, 0 
+	XORWF       _SendPlayer+1, 0 
+	BTFSS       STATUS+0, 2 
+	GOTO        L__updateData219
+	MOVF        _SendPlayer+0, 0 
+	XORWF       updateData_mark_L0+0, 0 
+L__updateData219:
+	BTFSS       STATUS+0, 2 
+	GOTO        L_updateData104
+;main.c,137 :: 		Serial_Read(&newPlayer, sizeof(Splite));
+	MOVLW       _newPlayer+0
+	MOVWF       FARG_Serial_Read_buf+0 
+	MOVLW       hi_addr(_newPlayer+0)
+	MOVWF       FARG_Serial_Read_buf+1 
+	MOVLW       6
+	MOVWF       FARG_Serial_Read_n+0 
+	MOVLW       0
+	MOVWF       FARG_Serial_Read_n+1 
+	CALL        _Serial_Read+0, 0
+;main.c,138 :: 		continue;
+	GOTO        L_updateData101
+;main.c,139 :: 		}
+L_updateData104:
+;main.c,141 :: 		Serial_clear();
+	CALL        _Serial_clear+0, 0
+;main.c,142 :: 		}
+L_updateData103:
+;main.c,144 :: 		return;
+;main.c,147 :: 		}
+L_end_updateData:
+	RETURN      0
+; end of _updateData
+
 _init_game:
 
-;main.c,25 :: 		void init_game()
-;main.c,28 :: 		scoreA = 0;
+;main.c,150 :: 		void init_game()
+;main.c,153 :: 		scoreA = 0;
 	CLRF        _scoreA+0 
-;main.c,29 :: 		scoreB = 0;
+;main.c,154 :: 		scoreB = 0;
 	CLRF        _scoreB+0 
-;main.c,30 :: 		timeFlag = 0;
+;main.c,155 :: 		timeFlag = 0;
 	CLRF        _timeFlag+0 
-;main.c,31 :: 		contador_ms = 0;
+;main.c,156 :: 		contador_ms = 0;
 	CLRF        _contador_ms+0 
-;main.c,32 :: 		modeGame = 0;
+;main.c,157 :: 		modeGame = 0;
 	CLRF        _modeGame+0 
-;main.c,34 :: 		playerOne.rect.x = 32;
+;main.c,159 :: 		playerOne.rect.x = 32;
 	MOVLW       32
 	MOVWF       _playerOne+0 
-;main.c,35 :: 		playerOne.rect.y = 55;
+;main.c,160 :: 		playerOne.rect.y = 55;
 	MOVLW       55
 	MOVWF       _playerOne+1 
-;main.c,36 :: 		playerOne.rect.w = 9;
+;main.c,161 :: 		playerOne.rect.w = 9;
 	MOVLW       9
 	MOVWF       _playerOne+2 
-;main.c,37 :: 		playerOne.rect.h = 9;
+;main.c,162 :: 		playerOne.rect.h = 9;
 	MOVLW       9
 	MOVWF       _playerOne+3 
-;main.c,38 :: 		playerOne.vel.dx = 0;
+;main.c,163 :: 		playerOne.vel.dx = 0;
 	CLRF        _playerOne+4 
-;main.c,39 :: 		playerOne.vel.dy = 1;
+;main.c,164 :: 		playerOne.vel.dy = 1;
 	MOVLW       1
 	MOVWF       _playerOne+5 
-;main.c,41 :: 		playerPC.rect.x = 94;
+;main.c,166 :: 		playerPC.rect.x = 94;
 	MOVLW       94
 	MOVWF       _playerPC+0 
-;main.c,42 :: 		playerPC.rect.y = 55;
+;main.c,167 :: 		playerPC.rect.y = 55;
 	MOVLW       55
 	MOVWF       _playerPC+1 
-;main.c,43 :: 		playerPC.rect.w = 9;
+;main.c,168 :: 		playerPC.rect.w = 9;
 	MOVLW       9
 	MOVWF       _playerPC+2 
-;main.c,44 :: 		playerPC.rect.h = 9;
+;main.c,169 :: 		playerPC.rect.h = 9;
 	MOVLW       9
 	MOVWF       _playerPC+3 
-;main.c,45 :: 		playerPC.vel.dx = 0;
+;main.c,170 :: 		playerPC.vel.dx = 0;
 	CLRF        _playerPC+4 
-;main.c,46 :: 		playerPC.vel.dy = 1;
+;main.c,171 :: 		playerPC.vel.dy = 1;
 	MOVLW       1
 	MOVWF       _playerPC+5 
-;main.c,48 :: 		playerTwo = playerPC;
+;main.c,173 :: 		playerTwo = playerPC;
 	MOVLW       6
 	MOVWF       R0 
 	MOVLW       _playerTwo+0
@@ -1838,39 +2255,39 @@ _init_game:
 	MOVWF       FSR0L+0 
 	MOVLW       hi_addr(_playerPC+0)
 	MOVWF       FSR0L+1 
-L_init_game81:
+L_init_game105:
 	MOVF        POSTINC0+0, 0 
 	MOVWF       POSTINC1+0 
 	DECF        R0, 1 
 	BTFSS       STATUS+0, 2 
-	GOTO        L_init_game81
-;main.c,50 :: 		timer.x = 62;
+	GOTO        L_init_game105
+;main.c,175 :: 		timer.x = 62;
 	MOVLW       62
 	MOVWF       _timer+0 
-;main.c,51 :: 		timer.y = 3;
+;main.c,176 :: 		timer.y = 3;
 	MOVLW       3
 	MOVWF       _timer+1 
-;main.c,52 :: 		timer.w = 1;
+;main.c,177 :: 		timer.w = 1;
 	MOVLW       1
 	MOVWF       _timer+2 
-;main.c,53 :: 		timer.h = 60;
+;main.c,178 :: 		timer.h = 60;
 	MOVLW       60
 	MOVWF       _timer+3 
-;main.c,55 :: 		initEnvironment(m);
+;main.c,180 :: 		initEnvironment(m);
 	MOVLW       _m+0
 	MOVWF       FARG_initEnvironment_s+0 
 	MOVLW       hi_addr(_m+0)
 	MOVWF       FARG_initEnvironment_s+1 
 	CALL        _initEnvironment+0, 0
-;main.c,56 :: 		}
+;main.c,181 :: 		}
 L_end_init_game:
 	RETURN      0
 ; end of _init_game
 
 _updateGameTime:
 
-;main.c,60 :: 		void updateGameTime(Rect *t)
-;main.c,63 :: 		if (t->y >= 63)
+;main.c,185 :: 		void updateGameTime(Rect *t)
+;main.c,188 :: 		if (t->y >= 63)
 	MOVLW       1
 	ADDWF       FARG_updateGameTime_t+0, 0 
 	MOVWF       FSR0L+0 
@@ -1884,44 +2301,44 @@ _updateGameTime:
 	XORLW       63
 	SUBWF       R0, 0 
 	BTFSS       STATUS+0, 0 
-	GOTO        L_updateGameTime82
-;main.c,65 :: 		if (scoreA > scoreB)
+	GOTO        L_updateGameTime106
+;main.c,190 :: 		if (scoreA > scoreB)
 	MOVF        _scoreA+0, 0 
 	SUBWF       _scoreB+0, 0 
 	BTFSC       STATUS+0, 0 
-	GOTO        L_updateGameTime83
-;main.c,67 :: 		draw_winFrame();
+	GOTO        L_updateGameTime107
+;main.c,192 :: 		draw_winFrame();
 	CALL        _draw_winFrame+0, 0
-;main.c,68 :: 		init_game();
+;main.c,193 :: 		init_game();
 	CALL        _init_game+0, 0
-;main.c,69 :: 		state = MENU;
+;main.c,194 :: 		state = MENU;
 	MOVLW       1
 	MOVWF       _state+0 
-;main.c,70 :: 		}
-	GOTO        L_updateGameTime84
-L_updateGameTime83:
-;main.c,72 :: 		else if (scoreB > scoreA)
+;main.c,195 :: 		}
+	GOTO        L_updateGameTime108
+L_updateGameTime107:
+;main.c,197 :: 		else if (scoreB > scoreA)
 	MOVF        _scoreB+0, 0 
 	SUBWF       _scoreA+0, 0 
 	BTFSC       STATUS+0, 0 
-	GOTO        L_updateGameTime85
-;main.c,74 :: 		draw_loseFrame();
+	GOTO        L_updateGameTime109
+;main.c,199 :: 		draw_loseFrame();
 	CALL        _draw_loseFrame+0, 0
-;main.c,75 :: 		init_game();
+;main.c,200 :: 		init_game();
 	CALL        _init_game+0, 0
-;main.c,76 :: 		state = MENU;
+;main.c,201 :: 		state = MENU;
 	MOVLW       1
 	MOVWF       _state+0 
-;main.c,77 :: 		}
-L_updateGameTime85:
-L_updateGameTime84:
-;main.c,81 :: 		}
-L_updateGameTime82:
-;main.c,84 :: 		if (timeFlag)
+;main.c,202 :: 		}
+L_updateGameTime109:
+L_updateGameTime108:
+;main.c,206 :: 		}
+L_updateGameTime106:
+;main.c,209 :: 		if (timeFlag)
 	MOVF        _timeFlag+0, 1 
 	BTFSC       STATUS+0, 2 
-	GOTO        L_updateGameTime86
-;main.c,86 :: 		t->y++;
+	GOTO        L_updateGameTime110
+;main.c,211 :: 		t->y++;
 	MOVLW       1
 	ADDWF       FARG_updateGameTime_t+0, 0 
 	MOVWF       R1 
@@ -1937,88 +2354,88 @@ L_updateGameTime82:
 	MOVFF       R2, FSR1H+0
 	MOVF        R0, 0 
 	MOVWF       POSTINC1+0 
-;main.c,87 :: 		timeFlag = 0;
+;main.c,212 :: 		timeFlag = 0;
 	CLRF        _timeFlag+0 
-;main.c,88 :: 		}
-L_updateGameTime86:
-;main.c,90 :: 		}
+;main.c,213 :: 		}
+L_updateGameTime110:
+;main.c,215 :: 		}
 L_end_updateGameTime:
 	RETURN      0
 ; end of _updateGameTime
 
 _main:
 
-;main.c,95 :: 		void main() {
-;main.c,97 :: 		state = 0;
+;main.c,220 :: 		void main() {
+;main.c,222 :: 		state = 0;
 	CLRF        _state+0 
-;main.c,99 :: 		init_game();
+;main.c,224 :: 		init_game();
 	CALL        _init_game+0, 0
-;main.c,100 :: 		ADCON1 = 0x0F;
+;main.c,225 :: 		ADCON1 = 0x0F;
 	MOVLW       15
 	MOVWF       ADCON1+0 
-;main.c,101 :: 		Glcd_Init();
+;main.c,226 :: 		Glcd_Init();
 	CALL        _Glcd_Init+0, 0
-;main.c,102 :: 		Serial_Init();
+;main.c,227 :: 		Serial_Init();
 	CALL        main_Serial_Init+0, 0
-;main.c,103 :: 		InitTimer0();
+;main.c,228 :: 		InitTimer0();
 	CALL        main_InitTimer0+0, 0
-;main.c,105 :: 		while (1)
-L_main87:
-;main.c,107 :: 		switch (state)
-	GOTO        L_main89
-;main.c,109 :: 		case TITLE:
-L_main91:
-;main.c,110 :: 		draw_InitFrame();
+;main.c,230 :: 		while (1)
+L_main111:
+;main.c,232 :: 		switch (state)
+	GOTO        L_main113
+;main.c,234 :: 		case TITLE:
+L_main115:
+;main.c,235 :: 		draw_InitFrame();
 	CALL        _draw_InitFrame+0, 0
-;main.c,111 :: 		state = MENU;
+;main.c,236 :: 		state = MENU;
 	MOVLW       1
 	MOVWF       _state+0 
-;main.c,112 :: 		break;
-	GOTO        L_main90
-;main.c,114 :: 		case MENU:
-L_main92:
-;main.c,115 :: 		state = draw_MenuGame(modeGame);
+;main.c,237 :: 		break;
+	GOTO        L_main114
+;main.c,239 :: 		case MENU:
+L_main116:
+;main.c,240 :: 		state = draw_MenuGame(modeGame);
 	MOVF        _modeGame+0, 0 
 	MOVWF       FARG_draw_MenuGame_modeGame+0 
 	CALL        _draw_MenuGame+0, 0
 	MOVF        R0, 0 
 	MOVWF       _state+0 
-;main.c,116 :: 		break;
-	GOTO        L_main90
-;main.c,118 :: 		case ONEPLAYER:
-L_main93:
-;main.c,119 :: 		init_game();
+;main.c,241 :: 		break;
+	GOTO        L_main114
+;main.c,243 :: 		case ONEPLAYER:
+L_main117:
+;main.c,244 :: 		init_game();
 	CALL        _init_game+0, 0
-;main.c,120 :: 		draw_clear();
+;main.c,245 :: 		draw_clear();
 	CALL        _draw_clear+0, 0
-;main.c,121 :: 		draw_score(scoreA, scoreB);
+;main.c,246 :: 		draw_score(scoreA, scoreB);
 	MOVF        _scoreA+0, 0 
 	MOVWF       FARG_draw_score_a+0 
 	MOVF        _scoreB+0, 0 
 	MOVWF       FARG_draw_score_b+0 
 	CALL        _draw_score+0, 0
-;main.c,122 :: 		TMR0IE_bit    = 1; //lo vuelvo a habilitar ya que si salto de dos jugadores a uno, esta apagado
+;main.c,247 :: 		TMR0IE_bit    = 1; //lo vuelvo a habilitar ya que si salto de dos jugadores a uno, esta apagado
 	BSF         TMR0IE_bit+0, BitPos(TMR0IE_bit+0) 
-;main.c,123 :: 		while (1)
-L_main94:
-;main.c,126 :: 		updateGameTime(&timer);
+;main.c,248 :: 		while (1)
+L_main118:
+;main.c,251 :: 		updateGameTime(&timer);
 	MOVLW       _timer+0
 	MOVWF       FARG_updateGameTime_t+0 
 	MOVLW       hi_addr(_timer+0)
 	MOVWF       FARG_updateGameTime_t+1 
 	CALL        _updateGameTime+0, 0
-;main.c,127 :: 		if (state == MENU)
+;main.c,252 :: 		if (state == MENU)
 	MOVF        _state+0, 0 
 	XORLW       1
 	BTFSS       STATUS+0, 2 
-	GOTO        L_main96
-;main.c,129 :: 		draw_clear();
+	GOTO        L_main120
+;main.c,254 :: 		draw_clear();
 	CALL        _draw_clear+0, 0
-;main.c,130 :: 		break;
-	GOTO        L_main95
-;main.c,131 :: 		}
-L_main96:
-;main.c,133 :: 		playerOne = move_player(playerOne, m);
+;main.c,255 :: 		break;
+	GOTO        L_main119
+;main.c,256 :: 		}
+L_main120:
+;main.c,258 :: 		playerOne = move_player(playerOne, m);
 	MOVLW       6
 	MOVWF       R0 
 	MOVLW       FARG_move_player_player+0
@@ -2029,12 +2446,12 @@ L_main96:
 	MOVWF       FSR0L+0 
 	MOVLW       hi_addr(_playerOne+0)
 	MOVWF       FSR0L+1 
-L_main97:
+L_main121:
 	MOVF        POSTINC0+0, 0 
 	MOVWF       POSTINC1+0 
 	DECF        R0, 1 
 	BTFSS       STATUS+0, 2 
-	GOTO        L_main97
+	GOTO        L_main121
 	MOVLW       _m+0
 	MOVWF       FARG_move_player_a+0 
 	MOVLW       hi_addr(_m+0)
@@ -2054,19 +2471,19 @@ L_main97:
 	MOVWF       FSR0L+0 
 	MOVLW       hi_addr(FLOC__main+0)
 	MOVWF       FSR0L+1 
-L_main98:
+L_main122:
 	MOVF        POSTINC0+0, 0 
 	MOVWF       POSTINC1+0 
 	DECF        R0, 1 
 	BTFSS       STATUS+0, 2 
-	GOTO        L_main98
-;main.c,134 :: 		environment(m);
+	GOTO        L_main122
+;main.c,259 :: 		environment(m);
 	MOVLW       _m+0
 	MOVWF       FARG_environment_s+0 
 	MOVLW       hi_addr(_m+0)
 	MOVWF       FARG_environment_s+1 
 	CALL        _environment+0, 0
-;main.c,135 :: 		playerPC = move_ai(playerPC, m);
+;main.c,260 :: 		playerPC = move_ai(playerPC, m);
 	MOVLW       6
 	MOVWF       R0 
 	MOVLW       FARG_move_ai_pc+0
@@ -2077,12 +2494,12 @@ L_main98:
 	MOVWF       FSR0L+0 
 	MOVLW       hi_addr(_playerPC+0)
 	MOVWF       FSR0L+1 
-L_main99:
+L_main123:
 	MOVF        POSTINC0+0, 0 
 	MOVWF       POSTINC1+0 
 	DECF        R0, 1 
 	BTFSS       STATUS+0, 2 
-	GOTO        L_main99
+	GOTO        L_main123
 	MOVLW       _m+0
 	MOVWF       FARG_move_ai_a+0 
 	MOVLW       hi_addr(_m+0)
@@ -2102,13 +2519,13 @@ L_main99:
 	MOVWF       FSR0L+0 
 	MOVLW       hi_addr(FLOC__main+0)
 	MOVWF       FSR0L+1 
-L_main100:
+L_main124:
 	MOVF        POSTINC0+0, 0 
 	MOVWF       POSTINC1+0 
 	DECF        R0, 1 
 	BTFSS       STATUS+0, 2 
-	GOTO        L_main100
-;main.c,140 :: 		draw_box(timer, DRAW);
+	GOTO        L_main124
+;main.c,265 :: 		draw_box(timer, DRAW);
 	MOVLW       4
 	MOVWF       R0 
 	MOVLW       FARG_draw_box_r+0
@@ -2119,16 +2536,16 @@ L_main100:
 	MOVWF       FSR0L+0 
 	MOVLW       hi_addr(_timer+0)
 	MOVWF       FSR0L+1 
-L_main101:
+L_main125:
 	MOVF        POSTINC0+0, 0 
 	MOVWF       POSTINC1+0 
 	DECF        R0, 1 
 	BTFSS       STATUS+0, 2 
-	GOTO        L_main101
+	GOTO        L_main125
 	MOVLW       1
 	MOVWF       FARG_draw_box_color+0 
 	CALL        _draw_box+0, 0
-;main.c,141 :: 		draw_partial_image(playerPC.rect, ship);
+;main.c,266 :: 		draw_partial_image(playerPC.rect, ship);
 	MOVLW       4
 	MOVWF       R0 
 	MOVLW       FARG_draw_partial_image_player+0
@@ -2139,12 +2556,12 @@ L_main101:
 	MOVWF       FSR0L+0 
 	MOVLW       hi_addr(_playerPC+0)
 	MOVWF       FSR0L+1 
-L_main102:
+L_main126:
 	MOVF        POSTINC0+0, 0 
 	MOVWF       POSTINC1+0 
 	DECF        R0, 1 
 	BTFSS       STATUS+0, 2 
-	GOTO        L_main102
+	GOTO        L_main126
 	MOVLW       _ship+0
 	MOVWF       FARG_draw_partial_image_image+0 
 	MOVLW       hi_addr(_ship+0)
@@ -2152,7 +2569,7 @@ L_main102:
 	MOVLW       higher_addr(_ship+0)
 	MOVWF       FARG_draw_partial_image_image+2 
 	CALL        _draw_partial_image+0, 0
-;main.c,142 :: 		draw_partial_image(playerOne.rect, ship);
+;main.c,267 :: 		draw_partial_image(playerOne.rect, ship);
 	MOVLW       4
 	MOVWF       R0 
 	MOVLW       FARG_draw_partial_image_player+0
@@ -2163,12 +2580,12 @@ L_main102:
 	MOVWF       FSR0L+0 
 	MOVLW       hi_addr(_playerOne+0)
 	MOVWF       FSR0L+1 
-L_main103:
+L_main127:
 	MOVF        POSTINC0+0, 0 
 	MOVWF       POSTINC1+0 
 	DECF        R0, 1 
 	BTFSS       STATUS+0, 2 
-	GOTO        L_main103
+	GOTO        L_main127
 	MOVLW       _ship+0
 	MOVWF       FARG_draw_partial_image_image+0 
 	MOVLW       hi_addr(_ship+0)
@@ -2176,22 +2593,22 @@ L_main103:
 	MOVLW       higher_addr(_ship+0)
 	MOVWF       FARG_draw_partial_image_image+2 
 	CALL        _draw_partial_image+0, 0
-;main.c,143 :: 		for (i = 0; i <= NUM_ASTEROIDS - 1; i++){
+;main.c,268 :: 		for (i = 0; i <= NUM_ASTEROIDS - 1; i++){
 	CLRF        _i+0 
-L_main104:
+L_main128:
 	MOVLW       128
 	XORLW       0
 	MOVWF       R0 
 	MOVLW       128
 	SUBWF       R0, 0 
 	BTFSS       STATUS+0, 2 
-	GOTO        L__main176
+	GOTO        L__main223
 	MOVF        _i+0, 0 
 	SUBLW       12
-L__main176:
+L__main223:
 	BTFSS       STATUS+0, 0 
-	GOTO        L_main105
-;main.c,144 :: 		draw_horizontal_line(m[i], DRAW);
+	GOTO        L_main129
+;main.c,269 :: 		draw_horizontal_line(m[i], DRAW);
 	MOVF        _i+0, 0 
 	MOVWF       R0 
 	MOVLW       0
@@ -2214,46 +2631,46 @@ L__main176:
 	MOVWF       FSR1L+0 
 	MOVLW       hi_addr(FARG_draw_horizontal_line_asteroid+0)
 	MOVWF       FSR1L+1 
-L_main107:
+L_main131:
 	MOVF        POSTINC0+0, 0 
 	MOVWF       POSTINC1+0 
 	DECF        R0, 1 
 	BTFSS       STATUS+0, 2 
-	GOTO        L_main107
+	GOTO        L_main131
 	MOVLW       1
 	MOVWF       FARG_draw_horizontal_line_color+0 
 	CALL        _draw_horizontal_line+0, 0
-;main.c,143 :: 		for (i = 0; i <= NUM_ASTEROIDS - 1; i++){
+;main.c,268 :: 		for (i = 0; i <= NUM_ASTEROIDS - 1; i++){
 	INCF        _i+0, 1 
-;main.c,145 :: 		}
-	GOTO        L_main104
-L_main105:
-;main.c,146 :: 		Delay_ms(60);
+;main.c,270 :: 		}
+	GOTO        L_main128
+L_main129:
+;main.c,271 :: 		Delay_ms(60);
 	MOVLW       156
 	MOVWF       R12, 0
 	MOVLW       215
 	MOVWF       R13, 0
-L_main108:
+L_main132:
 	DECFSZ      R13, 1, 1
-	BRA         L_main108
+	BRA         L_main132
 	DECFSZ      R12, 1, 1
-	BRA         L_main108
-;main.c,147 :: 		for (i = 0; i <= NUM_ASTEROIDS - 1; i++){
+	BRA         L_main132
+;main.c,272 :: 		for (i = 0; i <= NUM_ASTEROIDS - 1; i++){
 	CLRF        _i+0 
-L_main109:
+L_main133:
 	MOVLW       128
 	XORLW       0
 	MOVWF       R0 
 	MOVLW       128
 	SUBWF       R0, 0 
 	BTFSS       STATUS+0, 2 
-	GOTO        L__main177
+	GOTO        L__main224
 	MOVF        _i+0, 0 
 	SUBLW       12
-L__main177:
+L__main224:
 	BTFSS       STATUS+0, 0 
-	GOTO        L_main110
-;main.c,148 :: 		draw_horizontal_line(m[i], ERASE);
+	GOTO        L_main134
+;main.c,273 :: 		draw_horizontal_line(m[i], ERASE);
 	MOVF        _i+0, 0 
 	MOVWF       R0 
 	MOVLW       0
@@ -2276,20 +2693,20 @@ L__main177:
 	MOVWF       FSR1L+0 
 	MOVLW       hi_addr(FARG_draw_horizontal_line_asteroid+0)
 	MOVWF       FSR1L+1 
-L_main112:
+L_main136:
 	MOVF        POSTINC0+0, 0 
 	MOVWF       POSTINC1+0 
 	DECF        R0, 1 
 	BTFSS       STATUS+0, 2 
-	GOTO        L_main112
+	GOTO        L_main136
 	CLRF        FARG_draw_horizontal_line_color+0 
 	CALL        _draw_horizontal_line+0, 0
-;main.c,147 :: 		for (i = 0; i <= NUM_ASTEROIDS - 1; i++){
+;main.c,272 :: 		for (i = 0; i <= NUM_ASTEROIDS - 1; i++){
 	INCF        _i+0, 1 
-;main.c,149 :: 		}
-	GOTO        L_main109
-L_main110:
-;main.c,150 :: 		draw_box(timer, ERASE);
+;main.c,274 :: 		}
+	GOTO        L_main133
+L_main134:
+;main.c,275 :: 		draw_box(timer, ERASE);
 	MOVLW       4
 	MOVWF       R0 
 	MOVLW       FARG_draw_box_r+0
@@ -2300,15 +2717,15 @@ L_main110:
 	MOVWF       FSR0L+0 
 	MOVLW       hi_addr(_timer+0)
 	MOVWF       FSR0L+1 
-L_main113:
+L_main137:
 	MOVF        POSTINC0+0, 0 
 	MOVWF       POSTINC1+0 
 	DECF        R0, 1 
 	BTFSS       STATUS+0, 2 
-	GOTO        L_main113
+	GOTO        L_main137
 	CLRF        FARG_draw_box_color+0 
 	CALL        _draw_box+0, 0
-;main.c,151 :: 		draw_partial_image(playerOne.rect, parche);
+;main.c,276 :: 		draw_partial_image(playerOne.rect, parche);
 	MOVLW       4
 	MOVWF       R0 
 	MOVLW       FARG_draw_partial_image_player+0
@@ -2319,12 +2736,12 @@ L_main113:
 	MOVWF       FSR0L+0 
 	MOVLW       hi_addr(_playerOne+0)
 	MOVWF       FSR0L+1 
-L_main114:
+L_main138:
 	MOVF        POSTINC0+0, 0 
 	MOVWF       POSTINC1+0 
 	DECF        R0, 1 
 	BTFSS       STATUS+0, 2 
-	GOTO        L_main114
+	GOTO        L_main138
 	MOVLW       _parche+0
 	MOVWF       FARG_draw_partial_image_image+0 
 	MOVLW       hi_addr(_parche+0)
@@ -2332,7 +2749,7 @@ L_main114:
 	MOVLW       higher_addr(_parche+0)
 	MOVWF       FARG_draw_partial_image_image+2 
 	CALL        _draw_partial_image+0, 0
-;main.c,152 :: 		draw_partial_image(playerPC.rect, parche);
+;main.c,277 :: 		draw_partial_image(playerPC.rect, parche);
 	MOVLW       4
 	MOVWF       R0 
 	MOVLW       FARG_draw_partial_image_player+0
@@ -2343,12 +2760,12 @@ L_main114:
 	MOVWF       FSR0L+0 
 	MOVLW       hi_addr(_playerPC+0)
 	MOVWF       FSR0L+1 
-L_main115:
+L_main139:
 	MOVF        POSTINC0+0, 0 
 	MOVWF       POSTINC1+0 
 	DECF        R0, 1 
 	BTFSS       STATUS+0, 2 
-	GOTO        L_main115
+	GOTO        L_main139
 	MOVLW       _parche+0
 	MOVWF       FARG_draw_partial_image_image+0 
 	MOVLW       hi_addr(_parche+0)
@@ -2356,33 +2773,90 @@ L_main115:
 	MOVLW       higher_addr(_parche+0)
 	MOVWF       FARG_draw_partial_image_image+2 
 	CALL        _draw_partial_image+0, 0
-;main.c,157 :: 		}
-	GOTO        L_main94
-L_main95:
-;main.c,159 :: 		break;
-	GOTO        L_main90
-;main.c,161 :: 		case MULTIPLAYER:
-L_main116:
-;main.c,162 :: 		init_game();
+;main.c,282 :: 		}
+	GOTO        L_main118
+L_main119:
+;main.c,284 :: 		break;
+	GOTO        L_main114
+;main.c,286 :: 		case MULTIPLAYER:
+L_main140:
+;main.c,287 :: 		init_game();
 	CALL        _init_game+0, 0
-;main.c,163 :: 		draw_clear();
+;main.c,288 :: 		draw_clear();
 	CALL        _draw_clear+0, 0
-;main.c,164 :: 		TMR0IE_bit    = 0;     //deshabilito la interrupcion por timer0, ya que me hace freezeado el micro
+;main.c,289 :: 		TMR0IE_bit    = 0;     //deshabilito la interrupcion por timer0, ya que me hace freezeado el micro
 	BCF         TMR0IE_bit+0, BitPos(TMR0IE_bit+0) 
-;main.c,165 :: 		while (1)
-L_main117:
-;main.c,172 :: 		if (state == MENU)
-	MOVF        _state+0, 0 
+;main.c,291 :: 		whoAmI = syncPlayer();
+	CALL        _syncPlayer+0, 0
+	MOVF        R0, 0 
+	MOVWF       _whoAmI+0 
+;main.c,292 :: 		Serial_clear();
+	CALL        _Serial_clear+0, 0
+;main.c,293 :: 		Delay_ms(2000);
+	MOVLW       21
+	MOVWF       R11, 0
+	MOVLW       75
+	MOVWF       R12, 0
+	MOVLW       190
+	MOVWF       R13, 0
+L_main141:
+	DECFSZ      R13, 1, 1
+	BRA         L_main141
+	DECFSZ      R12, 1, 1
+	BRA         L_main141
+	DECFSZ      R11, 1, 1
+	BRA         L_main141
+	NOP
+;main.c,295 :: 		forceSendPlayer();
+	CALL        _forceSendPlayer+0, 0
+;main.c,298 :: 		while (1)
+L_main142:
+;main.c,300 :: 		updateData();
+	CALL        _updateData+0, 0
+;main.c,304 :: 		if (whoAmI == 1) {
+	MOVF        _whoAmI+0, 0 
 	XORLW       1
 	BTFSS       STATUS+0, 2 
-	GOTO        L_main119
-;main.c,174 :: 		draw_clear();
-	CALL        _draw_clear+0, 0
-;main.c,175 :: 		break;
-	GOTO        L_main118
-;main.c,176 :: 		}
-L_main119:
-;main.c,180 :: 		key = readKeys();
+	GOTO        L_main144
+;main.c,305 :: 		playerTwo = moveAnother(playerTwo);
+	MOVLW       6
+	MOVWF       R0 
+	MOVLW       FARG_moveAnother_s+0
+	MOVWF       FSR1L+0 
+	MOVLW       hi_addr(FARG_moveAnother_s+0)
+	MOVWF       FSR1L+1 
+	MOVLW       _playerTwo+0
+	MOVWF       FSR0L+0 
+	MOVLW       hi_addr(_playerTwo+0)
+	MOVWF       FSR0L+1 
+L_main145:
+	MOVF        POSTINC0+0, 0 
+	MOVWF       POSTINC1+0 
+	DECF        R0, 1 
+	BTFSS       STATUS+0, 2 
+	GOTO        L_main145
+	MOVLW       FLOC__main+0
+	MOVWF       R0 
+	MOVLW       hi_addr(FLOC__main+0)
+	MOVWF       R1 
+	CALL        _moveAnother+0, 0
+	MOVLW       6
+	MOVWF       R0 
+	MOVLW       _playerTwo+0
+	MOVWF       FSR1L+0 
+	MOVLW       hi_addr(_playerTwo+0)
+	MOVWF       FSR1L+1 
+	MOVLW       FLOC__main+0
+	MOVWF       FSR0L+0 
+	MOVLW       hi_addr(FLOC__main+0)
+	MOVWF       FSR0L+1 
+L_main146:
+	MOVF        POSTINC0+0, 0 
+	MOVWF       POSTINC1+0 
+	DECF        R0, 1 
+	BTFSS       STATUS+0, 2 
+	GOTO        L_main146
+;main.c,307 :: 		key = readKeys();
 	MOVLW       FLOC__main+0
 	MOVWF       R0 
 	MOVLW       hi_addr(FLOC__main+0)
@@ -2398,38 +2872,59 @@ L_main119:
 	MOVWF       FSR0L+0 
 	MOVLW       hi_addr(FLOC__main+0)
 	MOVWF       FSR0L+1 
-L_main120:
+L_main147:
 	MOVF        POSTINC0+0, 0 
 	MOVWF       POSTINC1+0 
 	DECF        R0, 1 
 	BTFSS       STATUS+0, 2 
-	GOTO        L_main120
-;main.c,181 :: 		if (key.up)
+	GOTO        L_main147
+;main.c,308 :: 		if (key.up)
 	MOVF        _key+0, 1 
 	BTFSC       STATUS+0, 2 
-	GOTO        L_main121
-;main.c,183 :: 		playerOne.rect.y--;
+	GOTO        L_main148
+;main.c,310 :: 		playerOne.rect.y--;
 	DECF        _playerOne+1, 0 
 	MOVWF       R0 
 	MOVF        R0, 0 
 	MOVWF       _playerOne+1 
-;main.c,184 :: 		}
-	GOTO        L_main122
-L_main121:
-;main.c,185 :: 		else if (key.down)
+;main.c,311 :: 		}
+	GOTO        L_main149
+L_main148:
+;main.c,312 :: 		else if (key.down)
 	MOVF        _key+1, 1 
 	BTFSC       STATUS+0, 2 
-	GOTO        L_main123
-;main.c,187 :: 		playerOne.rect.y++;
+	GOTO        L_main150
+;main.c,314 :: 		playerOne.rect.y++;
 	MOVF        _playerOne+1, 0 
 	ADDLW       1
 	MOVWF       R0 
 	MOVF        R0, 0 
 	MOVWF       _playerOne+1 
-;main.c,188 :: 		}
-L_main123:
-L_main122:
-;main.c,191 :: 		Serial_Write(&SendPlayer , 2);
+;main.c,315 :: 		}
+L_main150:
+L_main149:
+;main.c,318 :: 		if (isPlayerNeedSend(playerOne)) {
+	MOVLW       6
+	MOVWF       R0 
+	MOVLW       FARG_isPlayerNeedSend_player+0
+	MOVWF       FSR1L+0 
+	MOVLW       hi_addr(FARG_isPlayerNeedSend_player+0)
+	MOVWF       FSR1L+1 
+	MOVLW       _playerOne+0
+	MOVWF       FSR0L+0 
+	MOVLW       hi_addr(_playerOne+0)
+	MOVWF       FSR0L+1 
+L_main151:
+	MOVF        POSTINC0+0, 0 
+	MOVWF       POSTINC1+0 
+	DECF        R0, 1 
+	BTFSS       STATUS+0, 2 
+	GOTO        L_main151
+	CALL        _isPlayerNeedSend+0, 0
+	MOVF        R0, 1 
+	BTFSC       STATUS+0, 2 
+	GOTO        L_main152
+;main.c,319 :: 		Serial_Write(&SendPlayer, 2);
 	MOVLW       _SendPlayer+0
 	MOVWF       FARG_Serial_Write_buf+0 
 	MOVLW       hi_addr(_SendPlayer+0)
@@ -2439,7 +2934,7 @@ L_main122:
 	MOVLW       0
 	MOVWF       FARG_Serial_Write_n+1 
 	CALL        _Serial_Write+0, 0
-;main.c,192 :: 		Serial_Write(&playerOne, sizeof(Splite));
+;main.c,320 :: 		Serial_Write(&playerOne, sizeof(Splite));
 	MOVLW       _playerOne+0
 	MOVWF       FARG_Serial_Write_buf+0 
 	MOVLW       hi_addr(_playerOne+0)
@@ -2449,78 +2944,146 @@ L_main122:
 	MOVLW       0
 	MOVWF       FARG_Serial_Write_n+1 
 	CALL        _Serial_Write+0, 0
-;main.c,195 :: 		while(1)
-L_main124:
-;main.c,197 :: 		num = Serial_available();
-	CALL        _Serial_available+0, 0
-	MOVF        R0, 0 
-	MOVWF       _num+0 
-;main.c,199 :: 		if (num >= (2 + sizeof(Splite)))
-	MOVLW       128
-	MOVWF       R2 
-	MOVLW       128
-	XORLW       0
-	SUBWF       R2, 0 
+;main.c,321 :: 		}
+L_main152:
+;main.c,322 :: 		}
+L_main144:
+;main.c,324 :: 		if (whoAmI == 2) {
+	MOVF        _whoAmI+0, 0 
+	XORLW       2
 	BTFSS       STATUS+0, 2 
-	GOTO        L__main178
-	MOVLW       8
-	SUBWF       R0, 0 
-L__main178:
-	BTFSS       STATUS+0, 0 
-	GOTO        L_main126
-;main.c,201 :: 		Serial_Read(&mark, 2);
-	MOVLW       _mark+0
-	MOVWF       FARG_Serial_Read_buf+0 
-	MOVLW       hi_addr(_mark+0)
-	MOVWF       FARG_Serial_Read_buf+1 
-	MOVLW       2
-	MOVWF       FARG_Serial_Read_n+0 
-	MOVLW       0
-	MOVWF       FARG_Serial_Read_n+1 
-	CALL        _Serial_Read+0, 0
-;main.c,204 :: 		if (mark == SendPlayer)
-	MOVF        _mark+1, 0 
-	XORWF       _SendPlayer+1, 0 
-	BTFSS       STATUS+0, 2 
-	GOTO        L__main179
-	MOVF        _SendPlayer+0, 0 
-	XORWF       _mark+0, 0 
-L__main179:
-	BTFSS       STATUS+0, 2 
-	GOTO        L_main127
-;main.c,206 :: 		Serial_Read(&playerTwo, sizeof(Splite));
-	MOVLW       _playerTwo+0
-	MOVWF       FARG_Serial_Read_buf+0 
-	MOVLW       hi_addr(_playerTwo+0)
-	MOVWF       FARG_Serial_Read_buf+1 
+	GOTO        L_main153
+;main.c,325 :: 		playerOne = moveAnother(playerOne);
 	MOVLW       6
-	MOVWF       FARG_Serial_Read_n+0 
-	MOVLW       0
-	MOVWF       FARG_Serial_Read_n+1 
-	CALL        _Serial_Read+0, 0
-;main.c,207 :: 		continue;
-	GOTO        L_main124
-;main.c,208 :: 		}
-L_main127:
-;main.c,209 :: 		Serial_clear();
-	CALL        _Serial_clear+0, 0
-;main.c,210 :: 		}
-L_main126:
-;main.c,212 :: 		}
-L_main125:
-;main.c,214 :: 		if (playerOne.rect.y == 0)
-	MOVF        _playerOne+1, 0 
-	XORLW       0
+	MOVWF       R0 
+	MOVLW       FARG_moveAnother_s+0
+	MOVWF       FSR1L+0 
+	MOVLW       hi_addr(FARG_moveAnother_s+0)
+	MOVWF       FSR1L+1 
+	MOVLW       _playerOne+0
+	MOVWF       FSR0L+0 
+	MOVLW       hi_addr(_playerOne+0)
+	MOVWF       FSR0L+1 
+L_main154:
+	MOVF        POSTINC0+0, 0 
+	MOVWF       POSTINC1+0 
+	DECF        R0, 1 
 	BTFSS       STATUS+0, 2 
-	GOTO        L_main128
-;main.c,216 :: 		init_game();
-	CALL        _init_game+0, 0
-;main.c,217 :: 		state = MENU;
-	MOVLW       1
-	MOVWF       _state+0 
-;main.c,218 :: 		}
-L_main128:
-;main.c,220 :: 		draw_partial_image(playerTwo.rect, ship);
+	GOTO        L_main154
+	MOVLW       FLOC__main+0
+	MOVWF       R0 
+	MOVLW       hi_addr(FLOC__main+0)
+	MOVWF       R1 
+	CALL        _moveAnother+0, 0
+	MOVLW       6
+	MOVWF       R0 
+	MOVLW       _playerOne+0
+	MOVWF       FSR1L+0 
+	MOVLW       hi_addr(_playerOne+0)
+	MOVWF       FSR1L+1 
+	MOVLW       FLOC__main+0
+	MOVWF       FSR0L+0 
+	MOVLW       hi_addr(FLOC__main+0)
+	MOVWF       FSR0L+1 
+L_main155:
+	MOVF        POSTINC0+0, 0 
+	MOVWF       POSTINC1+0 
+	DECF        R0, 1 
+	BTFSS       STATUS+0, 2 
+	GOTO        L_main155
+;main.c,327 :: 		key = readKeys();
+	MOVLW       FLOC__main+0
+	MOVWF       R0 
+	MOVLW       hi_addr(FLOC__main+0)
+	MOVWF       R1 
+	CALL        main_readKeys+0, 0
+	MOVLW       3
+	MOVWF       R0 
+	MOVLW       _key+0
+	MOVWF       FSR1L+0 
+	MOVLW       hi_addr(_key+0)
+	MOVWF       FSR1L+1 
+	MOVLW       FLOC__main+0
+	MOVWF       FSR0L+0 
+	MOVLW       hi_addr(FLOC__main+0)
+	MOVWF       FSR0L+1 
+L_main156:
+	MOVF        POSTINC0+0, 0 
+	MOVWF       POSTINC1+0 
+	DECF        R0, 1 
+	BTFSS       STATUS+0, 2 
+	GOTO        L_main156
+;main.c,328 :: 		if (key.up)
+	MOVF        _key+0, 1 
+	BTFSC       STATUS+0, 2 
+	GOTO        L_main157
+;main.c,330 :: 		playerTwo.rect.y--;
+	DECF        _playerTwo+1, 0 
+	MOVWF       R0 
+	MOVF        R0, 0 
+	MOVWF       _playerTwo+1 
+;main.c,331 :: 		}
+	GOTO        L_main158
+L_main157:
+;main.c,332 :: 		else if (key.down)
+	MOVF        _key+1, 1 
+	BTFSC       STATUS+0, 2 
+	GOTO        L_main159
+;main.c,334 :: 		playerTwo.rect.y++;
+	MOVF        _playerTwo+1, 0 
+	ADDLW       1
+	MOVWF       R0 
+	MOVF        R0, 0 
+	MOVWF       _playerTwo+1 
+;main.c,335 :: 		}
+L_main159:
+L_main158:
+;main.c,336 :: 		if (isPlayerNeedSend(playerTwo)) {
+	MOVLW       6
+	MOVWF       R0 
+	MOVLW       FARG_isPlayerNeedSend_player+0
+	MOVWF       FSR1L+0 
+	MOVLW       hi_addr(FARG_isPlayerNeedSend_player+0)
+	MOVWF       FSR1L+1 
+	MOVLW       _playerTwo+0
+	MOVWF       FSR0L+0 
+	MOVLW       hi_addr(_playerTwo+0)
+	MOVWF       FSR0L+1 
+L_main160:
+	MOVF        POSTINC0+0, 0 
+	MOVWF       POSTINC1+0 
+	DECF        R0, 1 
+	BTFSS       STATUS+0, 2 
+	GOTO        L_main160
+	CALL        _isPlayerNeedSend+0, 0
+	MOVF        R0, 1 
+	BTFSC       STATUS+0, 2 
+	GOTO        L_main161
+;main.c,337 :: 		Serial_Write(&SendPlayer, 2);
+	MOVLW       _SendPlayer+0
+	MOVWF       FARG_Serial_Write_buf+0 
+	MOVLW       hi_addr(_SendPlayer+0)
+	MOVWF       FARG_Serial_Write_buf+1 
+	MOVLW       2
+	MOVWF       FARG_Serial_Write_n+0 
+	MOVLW       0
+	MOVWF       FARG_Serial_Write_n+1 
+	CALL        _Serial_Write+0, 0
+;main.c,338 :: 		Serial_Write(&playerTwo, sizeof(Splite));
+	MOVLW       _playerTwo+0
+	MOVWF       FARG_Serial_Write_buf+0 
+	MOVLW       hi_addr(_playerTwo+0)
+	MOVWF       FARG_Serial_Write_buf+1 
+	MOVLW       6
+	MOVWF       FARG_Serial_Write_n+0 
+	MOVLW       0
+	MOVWF       FARG_Serial_Write_n+1 
+	CALL        _Serial_Write+0, 0
+;main.c,339 :: 		}
+L_main161:
+;main.c,341 :: 		}
+L_main153:
+;main.c,398 :: 		draw_partial_image(playerTwo.rect, ship);
 	MOVLW       4
 	MOVWF       R0 
 	MOVLW       FARG_draw_partial_image_player+0
@@ -2531,12 +3094,12 @@ L_main128:
 	MOVWF       FSR0L+0 
 	MOVLW       hi_addr(_playerTwo+0)
 	MOVWF       FSR0L+1 
-L_main129:
+L_main162:
 	MOVF        POSTINC0+0, 0 
 	MOVWF       POSTINC1+0 
 	DECF        R0, 1 
 	BTFSS       STATUS+0, 2 
-	GOTO        L_main129
+	GOTO        L_main162
 	MOVLW       _ship+0
 	MOVWF       FARG_draw_partial_image_image+0 
 	MOVLW       hi_addr(_ship+0)
@@ -2544,7 +3107,7 @@ L_main129:
 	MOVLW       higher_addr(_ship+0)
 	MOVWF       FARG_draw_partial_image_image+2 
 	CALL        _draw_partial_image+0, 0
-;main.c,221 :: 		draw_partial_image(playerOne.rect, ship);
+;main.c,399 :: 		draw_partial_image(playerOne.rect, ship);
 	MOVLW       4
 	MOVWF       R0 
 	MOVLW       FARG_draw_partial_image_player+0
@@ -2555,12 +3118,12 @@ L_main129:
 	MOVWF       FSR0L+0 
 	MOVLW       hi_addr(_playerOne+0)
 	MOVWF       FSR0L+1 
-L_main130:
+L_main163:
 	MOVF        POSTINC0+0, 0 
 	MOVWF       POSTINC1+0 
 	DECF        R0, 1 
 	BTFSS       STATUS+0, 2 
-	GOTO        L_main130
+	GOTO        L_main163
 	MOVLW       _ship+0
 	MOVWF       FARG_draw_partial_image_image+0 
 	MOVLW       hi_addr(_ship+0)
@@ -2568,17 +3131,17 @@ L_main130:
 	MOVLW       higher_addr(_ship+0)
 	MOVWF       FARG_draw_partial_image_image+2 
 	CALL        _draw_partial_image+0, 0
-;main.c,222 :: 		Delay_ms(45);
+;main.c,400 :: 		Delay_ms(45);
 	MOVLW       117
 	MOVWF       R12, 0
 	MOVLW       225
 	MOVWF       R13, 0
-L_main131:
+L_main164:
 	DECFSZ      R13, 1, 1
-	BRA         L_main131
+	BRA         L_main164
 	DECFSZ      R12, 1, 1
-	BRA         L_main131
-;main.c,223 :: 		draw_partial_image(playerOne.rect, parche);
+	BRA         L_main164
+;main.c,401 :: 		draw_partial_image(playerOne.rect, parche);
 	MOVLW       4
 	MOVWF       R0 
 	MOVLW       FARG_draw_partial_image_player+0
@@ -2589,12 +3152,12 @@ L_main131:
 	MOVWF       FSR0L+0 
 	MOVLW       hi_addr(_playerOne+0)
 	MOVWF       FSR0L+1 
-L_main132:
+L_main165:
 	MOVF        POSTINC0+0, 0 
 	MOVWF       POSTINC1+0 
 	DECF        R0, 1 
 	BTFSS       STATUS+0, 2 
-	GOTO        L_main132
+	GOTO        L_main165
 	MOVLW       _parche+0
 	MOVWF       FARG_draw_partial_image_image+0 
 	MOVLW       hi_addr(_parche+0)
@@ -2602,7 +3165,7 @@ L_main132:
 	MOVLW       higher_addr(_parche+0)
 	MOVWF       FARG_draw_partial_image_image+2 
 	CALL        _draw_partial_image+0, 0
-;main.c,224 :: 		draw_partial_image(playerTwo.rect, parche);
+;main.c,402 :: 		draw_partial_image(playerTwo.rect, parche);
 	MOVLW       4
 	MOVWF       R0 
 	MOVLW       FARG_draw_partial_image_player+0
@@ -2613,12 +3176,12 @@ L_main132:
 	MOVWF       FSR0L+0 
 	MOVLW       hi_addr(_playerTwo+0)
 	MOVWF       FSR0L+1 
-L_main133:
+L_main166:
 	MOVF        POSTINC0+0, 0 
 	MOVWF       POSTINC1+0 
 	DECF        R0, 1 
 	BTFSS       STATUS+0, 2 
-	GOTO        L_main133
+	GOTO        L_main166
 	MOVLW       _parche+0
 	MOVWF       FARG_draw_partial_image_image+0 
 	MOVLW       hi_addr(_parche+0)
@@ -2626,38 +3189,35 @@ L_main133:
 	MOVLW       higher_addr(_parche+0)
 	MOVWF       FARG_draw_partial_image_image+2 
 	CALL        _draw_partial_image+0, 0
-;main.c,226 :: 		}
-	GOTO        L_main117
-L_main118:
-;main.c,228 :: 		break;
-	GOTO        L_main90
-;main.c,230 :: 		default:
-L_main134:
-;main.c,231 :: 		break;
-	GOTO        L_main90
-;main.c,232 :: 		}
-L_main89:
+;main.c,404 :: 		}
+	GOTO        L_main142
+;main.c,408 :: 		default:
+L_main167:
+;main.c,409 :: 		break;
+	GOTO        L_main114
+;main.c,410 :: 		}
+L_main113:
 	MOVF        _state+0, 0 
 	XORLW       0
 	BTFSC       STATUS+0, 2 
-	GOTO        L_main91
+	GOTO        L_main115
 	MOVF        _state+0, 0 
 	XORLW       1
 	BTFSC       STATUS+0, 2 
-	GOTO        L_main92
+	GOTO        L_main116
 	MOVF        _state+0, 0 
 	XORLW       2
 	BTFSC       STATUS+0, 2 
-	GOTO        L_main93
+	GOTO        L_main117
 	MOVF        _state+0, 0 
 	XORLW       3
 	BTFSC       STATUS+0, 2 
-	GOTO        L_main116
-	GOTO        L_main134
-L_main90:
-;main.c,233 :: 		}
-	GOTO        L_main87
-;main.c,237 :: 		}
+	GOTO        L_main140
+	GOTO        L_main167
+L_main114:
+;main.c,411 :: 		}
+	GOTO        L_main111
+;main.c,415 :: 		}
 L_end_main:
 	GOTO        $+0
 ; end of _main
