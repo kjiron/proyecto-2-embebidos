@@ -367,7 +367,7 @@ int main (int argc, char *args[]) {
 			}
 
 			//draw menu 
-			draw_on_SDL_screen(loseScreen);
+			draw_on_SDL_screen(seleccionDeJuego);
 		
 		//display gameover
 		} else if (state == 2) {
