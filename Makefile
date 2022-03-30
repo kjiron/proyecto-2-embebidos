@@ -2,7 +2,7 @@
 
 GIT:
 	git add .
-	git commit -am "Creando el ambiente en SDL2"
+	git commit -am "Traduciendo las funciones a SDL2"
 	git push
 PC:
 	git stash
