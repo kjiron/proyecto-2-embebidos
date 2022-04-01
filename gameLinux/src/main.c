@@ -6,8 +6,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <unistd.h>
-#include <termios.h>
-#include <sys/ioctl.h>
+
 #include <time.h>
 //------------------------------------------------------------------------
 
@@ -18,6 +17,11 @@
 //initilise SDL
 int init(int w, int h, int argc, char *args[]);
 
+
+
+void Delay_ms(uint32_t s) {
+	SDL_Delay(s);
+}
 
 
 typedef struct 
@@ -89,8 +93,7 @@ int recvPlayer() {
     uint16_t mark;
     while (1)
     {
-		//lee la cantidad de bytes en el puerto serial
-        ioctl(puerto_serial, FIONREAD, &n);
+		n = Serial_Available();
 
         if (n >= 2) {
             Serial_Read(&mark, 2);
@@ -108,7 +111,7 @@ int recvPlayer() {
             return 0;
         }
         i++;
-        usleep(200);
+        Delay_ms(200);
     }
     
 }
@@ -122,9 +125,13 @@ return
 int syncPlayer() {
     int player;
 
+	/*
 	//limpia el buffer del puerto serial
 	usleep(20);
     tcflush(puerto_serial, TCIOFLUSH);
+	*/
+
+	printf("sincronizando player\n");
 
     while (1)
     {
@@ -172,6 +179,7 @@ void updateData() {
 
     while (1)
     {
+		/*
 		n = select(ndfs, &r_set, NULL, NULL, &tv);
 		if (n < 0)
 		{
@@ -191,10 +199,15 @@ void updateData() {
 			{
 				printf("Erros leyendos los bytes\n");
 			}
+			*/
 			
 			
-			
-			if (amount >= (2 + sizeof(Splite)))
+			//if (amount >= (2 + sizeof(Splite)))\
+
+
+
+			n = Serial_Available();
+			if (n >= (2 + sizeof(Splite)))
 			{
 				//read(puerto_serial, &bufferRead, sizeof(int16_t));
 				Serial_Read(&mark, 2);
@@ -207,11 +220,16 @@ void updateData() {
 				}
 
 				//limpia el buffer del puerto serial
+				/*
 				usleep(10);
-				tcflush(puerto_serial, TCIOFLUSH);
+				tcflush(puerto_serial, TCIOFLUSH);\
+				*/
+				Serial_clear();
 			}
-			*/
 
+			return;
+			
+			/*
 			if(FD_ISSET(puerto_serial, &r_set))
 			{
 				//read(puerto_serial, &bufferRead, sizeof(int16_t));
@@ -225,12 +243,8 @@ void updateData() {
 
 				
 			}
+			*/
 
-
-
-		}
-
-		return;
     }
 
 }
@@ -264,15 +278,14 @@ Splite move_player(Splite p) {
 	if (key[SDL_SCANCODE_DOWN])
 	{
 		p.rect.y++;
-		SDL_Delay(30);
 	}
 
 	if (key[SDL_SCANCODE_UP])
 	{
 		p.rect.y--;
-		SDL_Delay(30);
+	
 	}
-
+	SDL_Delay(50);
 	return p;
 
 }
@@ -281,6 +294,7 @@ Splite move_player(Splite p) {
 static void draw_pixel() {
 
 	SDL_Rect srcOne, srcTwo;
+	//printf("pintando la picha\n");
 	
 	srcOne.x = playerOne.rect.x;
 	srcOne.y = playerOne.rect.y;
@@ -316,7 +330,7 @@ int main (int argc, char *args[]) {
 	int n = 0;
 
 
-	Serial_Init(B9600);
+	Serial_Init("/dev/ttyUSB0", B9600);
 	//SDL Window setup
 	if (init(SCREEN_WIDTH, SCREEN_HEIGHT, argc, args) == 1) {
 		
@@ -327,18 +341,26 @@ int main (int argc, char *args[]) {
 	
 	init_game();
 	whoAmI = syncPlayer();
+	printf(" player sincronizado =%d\n", whoAmI);
+
+	Serial_clear();
+	Delay_ms(2000);
+	/*
 	//limpia el buffer del puerto serial
 	usleep(20);
     tcflush(puerto_serial, TCIOFLUSH);
 	usleep(2000);
 	//sleep(2);
+	
+	*/
+
 	forceSendPlayer();
 
 	while (quit == 0)
 	{
 		
-		r_set = all_set;
-        tv.tv_usec = 100000;
+		//r_set = all_set;
+        //tv.tv_usec = 100000;
 
 		
 		SDL_PumpEvents();

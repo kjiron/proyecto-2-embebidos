@@ -1,22 +1,21 @@
 #include "serial.h"
 
-int puerto_serial, ndfs;
+int fileDesc;
 fd_set all_set, r_set;
 struct timeval tv;
 
-void Serial_Init(unsigned int b)
+void Serial_Init(const char *url, uint32_t baudrate)
 {
     struct timeval timeout;    
 	timeout.tv_sec = 1;
 	timeout.tv_usec = 0;
 
-	//puerto_serial = open("/dev/ttyUSB0", O_RDWR);  // /dev/ttyS0
-	puerto_serial = open("/dev/ttyUSB0", O_RDWR);  // /dev/ttyS0
-	ndfs = puerto_serial + 1;
+	//fileDesc = open("/dev/ttyUSB0", O_RDWR);  // /dev/ttyS0
+	fileDesc = open(url, O_RDWR);  // /dev/ttyS0
 	
 	//////preparing select()
 	FD_ZERO(&all_set);
-	FD_SET(puerto_serial, &all_set);
+	FD_SET(fileDesc, &all_set);
 	r_set = all_set;
 	tv.tv_sec = 1; 
 	tv.tv_usec = 0;
@@ -24,7 +23,7 @@ void Serial_Init(unsigned int b)
 	struct termios tty;
 
 	// Read in existing settings, and handle any error
-	if(tcgetattr(puerto_serial, &tty) != 0) 
+	if(tcgetattr(fileDesc, &tty) != 0) 
 	{
 		printf("Error %i from tcgetattr: %s\n", errno, strerror(errno));
 	}
@@ -51,25 +50,44 @@ void Serial_Init(unsigned int b)
 	tty.c_cc[VTIME] = 1;    // Wait for up to 1s (10 deciseconds), returning as soon as any data is received.
 	tty.c_cc[VMIN] = 20;
 
-	cfsetispeed(&tty, b);
-	cfsetospeed(&tty, b);
+	cfsetispeed(&tty, baudrate);
+	cfsetospeed(&tty, baudrate);
 
 	sleep(1);
-	tcflush(puerto_serial, TCIOFLUSH);
+	tcflush(fileDesc, TCIOFLUSH);
 
-	if (tcsetattr(puerto_serial, TCSANOW, &tty) != 0) 
+	if (tcsetattr(fileDesc, TCSANOW, &tty) != 0) 
 	{
 		printf("Error %i from tcsetattr: %s\n", errno, strerror(errno));
+		exit(1);
 	}
 }
 
 
-size_t Serial_Write(void *buf, size_t n)
+size_t Serial_Write(void *buf, int n)
 {
-    write(puerto_serial, buf, n);
+    n = write(fileDesc, buf, n);
+	if (n < 0) {
+		return 0;
+	}
+	return n;
 }
 
 size_t Serial_Read(void *buf, size_t n)
 {
-    read(puerto_serial, buf, n);
+    return read(fileDesc, buf, n);
+}
+
+
+size_t Serial_Available() {
+	size_t n = 0;
+	//lee la cantidad de bytes en el puerto serial
+	ioctl(fileDesc, FIONREAD, &n);
+	return n;
+}
+
+
+void Serial_clear() {
+	static char tmp[8*1024];
+	Serial_Read(tmp, sizeof(tmp));
 }
