@@ -23,7 +23,8 @@
 
 ## ToDo General
 
-- [] recv time
+- [x] recv time
+- [x] recv asteroides, [asteroidesMikroC](/asteroidsDBG.c) y [asteroidesLinux](/gameLinux/src/asteroids.c)
 - [] recv score
 - [] recv collision
-- [] se puede enviar cuando hay una tecla presionada en el teclado de la PC o RAS para dejar de estar intentado tener el mejor delay a punta de prueba y error
+- [x] se puede enviar cuando hay una tecla presionada en el teclado de la PC o RAS para dejar de estar intentado tener el mejor delay a punta de prueba y error
