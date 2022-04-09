@@ -1,28 +1,31 @@
-
-//Using libs SDL, glibc
 #include <SDL.h>	//SDL version 2.0
 #include "serial.h"
+#include "random.h"
 #include <stdlib.h>
 #include <stdint.h>
 #include <stdbool.h>
 #include <unistd.h>
 #include <time.h>
-//------------------------------------------------------------------------
 
 #define SCREEN_WIDTH 128	//window height
 #define SCREEN_HEIGHT 64	//window width
 #define NUM_ASTEROIDS 13
-//function prototypes
-//initilise SDL
+
+
+
 int init(int w, int h, int argc, char *args[]);
 
 
-
+/*
+Intenta replicar el delay en pic
+*/
 void Delay_ms(uint32_t s) {
 	SDL_Delay(s);
 }
 
-
+/*
+Estructura generica
+*/
 typedef struct
 {
   int8_t x, y;
@@ -30,30 +33,22 @@ typedef struct
 } Rect;
 
 
-//Constants for UART--------------------------------------------------------
-
-uint16_t bufferRead;
-uint16_t bufferWrite;
 
 
-//--------------------------------------------------------------------------
+/*
+marcas necesarias para el juego
+*/
+uint16_t SendAck        = 0x9111;
+uint16_t SendInit       = 0x9222;
+uint16_t SendUpdateAst  = 0x9333;
+uint16_t SendPlayer 	= 0x9444;
+uint16_t SendTime       = 0x9555;
+uint16_t SendPlayerX    = 0x9666;
+uint16_t SendScore      = 0x9777;
+uint16_t SendTimeOut    = 0x9888;
 
-// Program globals
 
-uint8_t SendAsteroid = 0xBB;
-uint8_t SendAsteroid2 = 0xEE;
-uint8_t SendAsteroid3 = 0xAA;
-uint8_t SendAsteroid4 = 0xA9;
-uint8_t SendAsteroid5 = 0xA8;
-uint8_t SendAsteroid6 = 0xA7;
-uint8_t SendAsteroid7 = 0xA6;
-uint8_t SendAsteroid8 = 0xA5;
-uint8_t SendAsteroid9 = 0xA4;
-uint8_t SendAsteroid10 = 0xA3;
-uint8_t SendAsteroid11 = 0xA2;
-uint8_t SendAsteroid12 = 0xA1;
-uint8_t SendAsteroid13 = 0xA0;
-uint16_t SendTime = 0x9555;
+
 
 
 
@@ -62,7 +57,12 @@ int width, height;		//used if fullscreen
 
 SDL_Window* window = NULL;	//The window we'll be rendering to
 SDL_Renderer *renderer;		//The renderer SDL will use to draw to the screen
-Rect timer;
+
+
+Rect timer, playerOne, playerTwo;
+uint8_t flagMove = 0;
+uint8_t scoreA, scoreB;
+
 //surfaces
 static SDL_Surface *screen;
 static SDL_Surface *title;
@@ -72,11 +72,12 @@ static SDL_Surface *end;
 //textures
 SDL_Texture *screen_texture;
 
-
+/*
+dibujos los asteroides
+*/
 static void draw_horizontal_line(Rect *s) {
-
 	SDL_Rect src;
-	//printf("pintando la ostia\n");
+	//printf("pintando la picha\n");
 	
 	for (int i = 0; i < NUM_ASTEROIDS; i++)
     {
@@ -86,10 +87,11 @@ static void draw_horizontal_line(Rect *s) {
         src.h = s[i].h;
         int r = SDL_FillRect(screen, &src, 0xffffffff);
     }
-	
-
 }
 
+/*
+dibuja el timer
+*/
 void draw_box(Rect t)
 {
 	SDL_Rect src;
@@ -99,32 +101,25 @@ void draw_box(Rect t)
     src.h = t.h;
 
     int r = SDL_FillRect(screen, &src, 0xffffffff);
-
-
 }
 
 
-
-
-// randint(10) -> 0 .. 10
-uint8_t randint(uint8_t n)
-{
-    return (uint8_t)(rand() % (n+1));
-}
-
+/*
+recreo el mismo entorno para los cohetes, utilizando randint(min, max)
+*/
 void initEnvironment(Rect *s)
 {
     uint8_t i, offset_x, offset_y;
-    offset_x = 0;
     offset_y = 53;
     for (i = 0; i < NUM_ASTEROIDS; i++)
-    {        
+    {       
+        offset_x = randint(0, 123);  
         s[i].x = offset_x;
         s[i].y = offset_y;
         s[i].w = 3;
         s[i].h = 1;
 
-        offset_x = randint(123); 
+        
         
         offset_y = offset_y - 4;
     }
@@ -136,173 +131,53 @@ void initEnvironment(Rect *s)
 }
 
 
-void environment(Rect *s)
-{
-    uint8_t i;
-    for (i = 0; i < NUM_ASTEROIDS; i++)
-    {
-        //draw_horizontal_line(s[i], ERASE);
-
-        if ((i % 2) == 1)
-        {
-            if (s[i].x <= 0)
-            {
-                s[i].x = 124;
-            }
-            s[i].x--;
-        }
-        else
-        {
-            if (s[i].x >= 124)
-            {
-                s[i].x = 0;
-            }
-            s[i].x++;
-        }
-        //draw_horizontal_line(s[i], DRAW);
-    }
-    
-}
-
-
-
-void Update_Asteroids(Rect *s)
+/*
+actualizo la bandera para mover los asteroides , el jugador leido por uart y el score
+*/
+void updateAsteroids()
 {
     int n, i;
     i = 0;
-    uint8_t mark;
-    //printf("nuevo\n");
+    uint16_t mark;
+
 
     while (1)
     {
         n = Serial_Available();
         //printf("n > {%d}\n", n);
 
-        if (n >= (1 + sizeof(Rect)))
+        if (n >= 2)
         {
-            Serial_Read(&mark, 1);
-            //printf("mark > {%d}\n", mark);
+            Serial_Read(&mark, 2);
 
-            if (mark == SendAsteroid)
+            if (mark == SendUpdateAst)
             {
-                Serial_Read(&s[0].x, 1);
-                //printf("a = {%d}, {%d}, {%d}, {%d}\n", s[0].x, s[0].y, s[0].w, s[0].h);
-                //i++;
+                flagMove = 1;
+                printf("Tick from PIC\n");
                 continue;
-                
             }
-            if (mark == SendAsteroid2)
-            {
-                Serial_Read(&s[1].x, 1);
-                //printf("b = {%d}, {%d}, {%d}, {%d}\n", s[1].x, s[1].y, s[1].w, s[1].h);
-                //i++;
-                continue;
-                
-            }
-
-            if (mark == SendAsteroid3)
-            {
-                
-                Serial_Read(&s[2].x, 1);
-
-                //printf("c = {%d}, {%d}, {%d}, {%d}\n", s[2].x, s[2].y, s[2].w, s[2].h);
-                //i++;
-                continue;
-                
-            }
-
-            if (mark == SendAsteroid4)
-            {
-                
-                Serial_Read(&s[3].x, 1);
-                //printf("d = {%d}, {%d}, {%d}, {%d}\n", s[3].x, s[3].y, s[3].w, s[3].h);
-                //i++;
-                continue;
-                
-            }
-
-            if (mark == SendAsteroid5)
-            {
-                Serial_Read(&s[4].x, 1);
-                //printf("e = {%d}, {%d}, {%d}, {%d}\n", s[4].x, s[4].y, s[4].w, s[4].h);
-                //i++;
-                continue;
-                
-            }
-
-            if (mark == SendAsteroid6)
-            {
-                Serial_Read(&s[5].x, 1);
-                //printf("f = {%d}, {%d}, {%d}, {%d}\n", s[5].x, s[5].y, s[5].w, s[5].h);
-                //i++;
-                continue;
-                
-            }
-
-            if (mark == SendAsteroid7)
-            {
-                Serial_Read(&s[6].x, 1);
-                //printf("g = {%d}, {%d}, {%d}, {%d}\n", s[6].x, s[6].y, s[6].w, s[6].h);
-                //i++;
-                continue;
-                
-            }
-
-            if (mark == SendAsteroid8)
-            {
-                Serial_Read(&s[7].x, 1);
-                //printf("h = {%d}, {%d}, {%d}, {%d}\n", s[7].x, s[7].y, s[7].w, s[7].h);
-                //i++;
-                continue;
-                
-            }
-
-            if (mark == SendAsteroid9)
-            {
-                Serial_Read(&s[8].x, 1);
-                //printf("i = {%d}, {%d}, {%d}, {%d}\n", s[8].x, s[8].y, s[8].w, s[8].h);
-                //i++;
-                continue;
-                
-            }
-
-            if (mark == SendAsteroid10)
-            {
-                Serial_Read(&s[9].x, 1);
-                //printf("j = {%d}, {%d}, {%d}, {%d}\n", s[9].x, s[9].y, s[9].w, s[9].h);
-                //i++;
-                continue;
-                
-            }
-
-            if (mark == SendAsteroid11)
-            {
-                Serial_Read(&s[10].x, 1);
-                //printf("k = {%d}, {%d}, {%d}, {%d}\n", s[10].x, s[10].y, s[10].w, s[10].h);
-                //i++;
-                continue;
-                
-            }
-
-            if (mark == SendAsteroid12)
-            {
-                Serial_Read(&s[11].x, 1);
-                //printf("l = {%d}, {%d}, {%d}, {%d}\n", s[11].x, s[11].y, s[11].w, s[11].h);
-                //i++;
-                continue;
-                
-            }
-
-            if (mark == SendAsteroid13)
-            {
-                Serial_Read(&s[12].x, 1);
-                //printf("m = {%d}, {%d}, {%d}, {%d}\n", s[12].x, s[12].y, s[12].w, s[12].h);
-                //i++;
-                continue;
-                
-            }
-
             
+            if (mark == SendPlayer)
+            {
+                printf("Recv player from PIC\n");
+                Serial_Read(&playerTwo, sizeof(Rect));
+                continue;
+            }
+
+            if (mark == SendPlayerX)
+            {
+                printf("Recv NEW player from PIC\n");
+                Serial_Read(&playerOne, sizeof(Rect));
+                continue;
+            }
+
+            if (mark == SendScore)
+            {
+                scoreA++;
+                continue;
+            }
+            
+
             Serial_clear();
         }
         return;
@@ -311,23 +186,192 @@ void Update_Asteroids(Rect *s)
 }
 
 
+/*
+detecto colision
+*/
+bool check_collision(Rect rect1, Rect rect2)
+{
+    return rect1.x < rect2.x + rect2.w &&
+       rect1.x + rect1.w > rect2.x &&
+       rect1.y < rect2.y + rect2.h &&
+       rect1.h + rect1.y > rect2.y;
+}
+
+
+/*
+muevo los asteroides segun la marca de tiempo y envio si existe una colision con los cohetes
+*/
+void moveAsteroids(Rect *s)
+{
+    if (flagMove)
+    {
+        flagMove = 0;
+
+        
+        
+
+        for (size_t i = 0; i < NUM_ASTEROIDS; i++)
+        {
+
+            if (check_collision(s[i], playerOne))
+            {
+                playerOne.y = 55;
+                Serial_Write(&SendPlayerX, 2);
+                Serial_Write(&playerOne, sizeof(Rect));
+
+            }
+
+            
+            if ((i % 2) == 1)
+            {
+                if (s[i].x <= 0)
+                {
+                    s[i].x = 124;
+                }
+                s[i].x--;
+            }
+
+            else
+            {
+                if (s[i].x >= 124)
+                {
+                    s[i].x = 0;
+                }
+                s[i].x++;
+            }
+            
+        }
+        
+    }
+    
+    
+}
+
+/*
+aqui vamos a sincronizar el inicio
+*/
+void syncGame()
+{
+    int n;
+    uint16_t mark;
+
+    while (1)
+    {
+        n = Serial_Available();
+        printf("n: {%d}\n", n);
+
+        if (n >= 2)
+        {
+            Serial_Read(&mark, 2);
+            printf("mark: {%d}\n", mark);
+            
+            if (mark == SendInit)
+            {
+                printf("Sincronizados\n");
+                Serial_Write(&SendAck, 2);
+                printf("Enviando ACK {%d}\n", SendAck);
+
+                break;
+            }
+            Serial_clear();
+        }
+    }
+}
+
+/*
+seteo las posiciones iniciales, se ponen h y w en 9 debido a que las
+imagenes en PIC son 9x9
+*/
+void initGame()
+{
+    playerOne.x = 94;
+    playerOne.y = 55;
+    playerOne.w = 9;
+    playerOne.h = 9;
+
+    playerTwo.x = 32;
+    playerTwo.y = 55;
+    playerTwo.w = 9;
+    playerTwo.h = 9;
+
+}
+
+
+/*
+muevo los jugadores, se podria mejorar con una estrucuta de keys
+*/
+void move_player(int d) {
+	if (d == 1)
+    {
+        playerOne.y--;
+        if (playerOne.y <= 0)
+        {
+            scoreB++;
+            Serial_Write(&SendScore, 2);
+            playerOne.y = 55;
+        }
+
+        
+        
+        SDL_Delay(75);
+
+    }
+
+    else
+    {
+        playerOne.y++;
+
+        if ((playerOne.y + (playerOne.h - 1)) >= 63) 
+        {
+            playerOne.y = 55;
+        }
+        SDL_Delay(75);
+
+    }
+
+}
+
+/*
+pinta a los jugadores
+*/
+static void draw_pixel() {
+
+	SDL_Rect srcOne, srcTwo;
+	//printf("pintando la picha\n");
+	
+	srcOne.x = playerOne.x;
+	srcOne.y = playerOne.y;
+	srcOne.w = playerOne.w;
+	srcOne.h = playerOne.h;
+
+	srcTwo.x = playerTwo.x;
+	srcTwo.y = playerTwo.y;
+	srcTwo.w = playerTwo.w;
+	srcTwo.h = playerTwo.h;
+
+	int r = SDL_FillRect(screen, &srcOne, 0xffffffff);
+	int a = SDL_FillRect(screen, &srcTwo, 0xffffffff);
+
+		
+	if (r !=0){
+	
+		printf("fill rectangle faliled in func draw_paddle()");
+	}
+
+}
 
 
 int main (int argc, char *args[]) {
 	
 	int sleep_sdl = 0;
 	int quit = 0;
-	int state = 1;
-	int r = 0;
-	int n = 0;
     int i = 0;
     time_t begin_s, end_s;
-    double elapsed, prev_elapsed = 0.0;
-    Rect m[NUM_ASTEROIDS];//cuidado
-    int aux;
-    aux = sizeof(Rect);
-	//printf("holaaaa {%d}", aux);
-    //return 0;
+    double elapsed;
+    Rect m[NUM_ASTEROIDS];
+
+
+
 	//SDL Window setup
 	if (init(SCREEN_WIDTH, SCREEN_HEIGHT, argc, args) == 1) {
 		
@@ -335,13 +379,18 @@ int main (int argc, char *args[]) {
 	}
 	SDL_GetWindowSize(window, &width, &height);
 	Uint32 next_game_tick = SDL_GetTicks();
-    Serial_Init("/dev/ttyUSB0", B9600);
-    initEnvironment(m);
 
-    //printf("carepicha\n");
-    
+
+    Serial_Init("/dev/ttyUSB0", B19200);
+    randomSeed(33);
+    initEnvironment(m);
+    initGame();
+    syncGame();
+    //dejo la marca de inicio
     time(&begin_s); 
     printf("{%d}s\n", i);
+
+
 
 	while (quit == 0)
 	{
@@ -356,20 +405,39 @@ int main (int argc, char *args[]) {
 		
 			quit = 1;
 		}
-		//logica de asteroides
-        //environment(m);
-        
-        Update_Asteroids(m);
-
-
 		
+        updateAsteroids();
+        moveAsteroids(m);
 
+		if (keystate[SDL_SCANCODE_DOWN]) {
+			
+			move_player(0);
+			Serial_Write(&SendPlayer, 2);
+			Serial_Write(&playerOne, sizeof(Rect));
+            //SDL_Delay(15);
+
+		}
+
+		if (keystate[SDL_SCANCODE_UP]) {
+
+			move_player(1);
+			Serial_Write(&SendPlayer, 2);
+			Serial_Write(&playerOne, sizeof(Rect));
+            //SDL_Delay(15);
+		}
 
         //parte de pintado en SDL
 		SDL_RenderClear(renderer);
 		SDL_FillRect(screen, NULL, 0x000000ff);
+
+        //pinto asteroides, tiempo y jugadores
 		draw_horizontal_line(m);
         draw_box(timer);
+        draw_pixel();
+        printf("Score: {%d},{%d}\n", scoreA, scoreB);
+
+
+
 		SDL_UpdateTexture(screen_texture, NULL, screen->pixels, screen->w * sizeof (Uint32));
 		SDL_RenderCopy(renderer, screen_texture, NULL, NULL);
 		//draw to the display
@@ -393,29 +461,46 @@ int main (int argc, char *args[]) {
             timer.y++;
             if (i == 60)
             {
+                //le mando una marca diciendo que el juego acabo
+                Serial_Write(&SendTimeOut, 2);
+
+                if (scoreA > scoreB)
+                {
+                    printf("YOU LOSE\n");
+                }
+
+                else if (scoreB > scoreA)
+                {
+                    printf("YOU WIN\n");
+
+                }
+
+                else
+                {
+                    printf("YOU LOSE\n");
+                }
+                
+                
+                
+
                 quit = 1;
             }
-            
+
             time(&begin_s);
-
-
         }
-        
 	}
+
 	//liberar memoria
 	SDL_FreeSurface(screen);
 	SDL_FreeSurface(title);
 	SDL_FreeSurface(numbermap);
 	SDL_FreeSurface(end);
-
-	//free renderer and all textures used with it
 	SDL_DestroyRenderer(renderer);
-	
-	//Destroy window 
 	SDL_DestroyWindow(window);
-
-	//Quit SDL subsystems 
 	SDL_Quit(); 
+
+
+
 	return 0;
 }
 
