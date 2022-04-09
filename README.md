@@ -25,9 +25,9 @@
 
 - [x] recv time
 - [x] recv asteroides, [asteroidesMikroC](/asteroidsDBG.c) y [asteroidesLinux](/gameLinux/src/asteroids.c), esto funciona pero no es la forma ideal.
-- [] crear pseudo-aleatorio para replicar la misma serie en linux C y en el PIC
-- [] sincronizar tiempo para mover los asteroides, según el delay del PIC
-- [] agregar a los jugadores, enviados y recibidos
-- [] recv score
-- [] recv collision
+- [x] crear pseudo-aleatorio para replicar la misma serie en linux C y en el PIC
+- [x] sincronizar tiempo para mover los asteroides, según el delay del PIC
+- [x] agregar a los jugadores, enviados y recibidos
+- [x] recv score
+- [x] recv collision
 - [x] se puede enviar cuando hay una tecla presionada en el teclado de la PC o RAS para dejar de estar intentado tener el mejor delay a punta de prueba y error

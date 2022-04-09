@@ -18,7 +18,8 @@ Value=
 [FILES]
 File0=asteroidsDBG.c
 File1=.\Include\serial.c
-Count=2
+File2=.\Include\random.c
+Count=3
 [BINARIES]
 Count=0
 [IMAGES]
@@ -28,7 +29,8 @@ ActiveImageIndex=-1
 File0=asteroidsDBG.c
 File1=.\Include\serial.c
 File2=.\Include\serial.h
-Count=3
+File3=.\Include\random.c
+Count=4
 [EEPROM]
 Count=0
 [ACTIVE_COMMENTS_FILES]
@@ -51,7 +53,8 @@ File2=C_Stdlib
 File3=C_Type
 File4=UART
 File5=C_String
-Count=6
+File6=Conversions
+Count=7
 [INTERRUPT_DEFS]
 VECTOR_MODE=0
 IVT_BASE=00000008

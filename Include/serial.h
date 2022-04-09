@@ -36,7 +36,7 @@ static void Serial_Init()
 
     //***Fin de la configuración de E/S**///
 
-    UART1_Init(9600); // initialize hardware UART @baudrate=115200, the same setting for the sensor
+    UART1_Init(19200); // initialize hardware UART @baudrate=115200, the same setting for the sensor
     Delay_ms(100);    // let them stablize
 
     PIE1.RCIE = 1; // enable interrupt source
