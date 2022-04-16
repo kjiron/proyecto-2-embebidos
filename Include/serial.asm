@@ -23,10 +23,10 @@ L_end_InitTimer0:
 serial_Serial_Init:
 
 ;serial.h,29 :: 		static void Serial_Init()
-;serial.h,39 :: 		UART1_Init(9600); // initialize hardware UART @baudrate=115200, the same setting for the sensor
+;serial.h,39 :: 		UART1_Init(19200); // initialize hardware UART @baudrate=115200, the same setting for the sensor
 	BSF         BAUDCON+0, 3, 0
 	CLRF        SPBRGH+0 
-	MOVLW       207
+	MOVLW       103
 	MOVWF       SPBRG+0 
 	BSF         TXSTA+0, 2, 0
 	CALL        _UART1_Init+0, 0

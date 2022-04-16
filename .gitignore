@@ -17,4 +17,4 @@
 *.mcl
 *.venv/
 *.h.ini
-
+*.vscode

@@ -1,8 +1,10 @@
-#include "\Include\serial.h"
+#include "Include\serial.h"
+#include "Include\random.h"
+
 #include <stdint.h>
-#include "\Include\drawGlcd.h"
-#include "\Include\hit.h"
-#include "\Include\keys.h"
+#include "Include\drawGlcd.h"
+#include "Include\hit.h"
+#include "Include\keys.h"
 
 
 #define TITLE           0
@@ -10,141 +12,27 @@
 #define ONEPLAYER       2
 #define MULTIPLAYER     3
 
-uint8_t whoAmI;
-uint8_t num = 0;
 uint8_t state, modeGame, i;
 
-uint16_t mark;
-uint16_t SendPlayer = 0x9669;
-uint16_t IamPlayer1 = 0x9666;
-uint16_t IamPlayer2 = 0x9667;
+/*
+banderas ha utilizar en multiplayer
+*/
+uint16_t SendAck        = 0x9111;
+uint16_t SendInit       = 0x9222;
+uint16_t SendUpdateAst  = 0x9333;
+uint16_t SendPlayer     = 0x9444;
+uint16_t SendTime       = 0x9555;
+uint16_t SendPlayerX    = 0x9666;
+uint16_t SendScore      = 0x9777;
+uint16_t SendTimeOut    = 0x9888;
+
 
 Rect m[NUM_ASTEROIDS], timer;//cuidado
-
+uint8_t flag = 0, flagScore = 0, flagTimeOut = 0;
 
 Splite playerOne, playerPC, playerTwo;
-Splite lastPosPlayer;
-Splite newPlayer;
 Keys key;
 
-
-bool isPlayerNeedSend(Splite player) {
-    if (player.rect.y != lastPosPlayer.rect.y) {
-        lastPosPlayer = player;
-        return true;
-    }
-    return false;
-}
-
-
-/* 
-intenta obtener player durante 1s
-
-return 
-    0, 1, 2
-
-*/
-int recvPlayer() {
-    int i = 0, n;
-    uint16 mark;
-    while (1)
-    {
-        n = Serial_available();
-        if (n >= 2) {
-            Serial_Read(&mark, 2);
-            if (mark == IamPlayer1) {
-                return 1;
-            }
-            if (mark == IamPlayer2) {
-                return 2;
-            }
-
-            // esto nunca deberia de pasar
-        }
-
-        if (i == 5) {
-            return 0;
-        }
-        i++;
-        Delay_ms(200);
-    }
-    
-}
-
-
-/*
-sincroniza toda la ostia
-
-return 
-    1, 2
-*/
-
-int syncPlayer() {
-    int player;
-    Serial_clear();
-
-    while (1)
-    {
-        player = recvPlayer();
-        if (player == 1) {
-            Serial_Write(&IamPlayer2, 2);
-            return 2;
-        }
-        if (player == 2) {
-            return 1;
-        }
-        Serial_Write(&IamPlayer1, 2);
-    }
-}
-
-
-Splite moveAnother(Splite s) {
-    return newPlayer;
-}
-
-void forceSendPlayer() {
-
-    if (whoAmI == 1) {
-
-        if (isPlayerNeedSend(playerOne) || 1) {
-            Serial_Write(&SendPlayer, 2);
-            Serial_Write(&playerOne, sizeof(Splite));                
-        }
-
-    }
-    if (whoAmI == 2) {
-        if (isPlayerNeedSend(playerTwo) || 1) {
-            Serial_Write(&SendPlayer, 2);
-            Serial_Write(&playerTwo, sizeof(Splite));                
-        }
-    }
-
-}
-
-
-void updateData() {
-    int n;
-    uint16_t mark;
-
-    while (1)
-    {
-    
-        n = Serial_available();
-        if (n >= (2 + sizeof(Splite))) {
-            Serial_Read(&mark, 2);
-
-            if (mark == SendPlayer) {
-                Serial_Read(&newPlayer, sizeof(Splite));
-                continue;
-            }
-
-            Serial_clear();
-        }
-
-        return;
-    }
-
-}
 
 
 void init_game()
@@ -214,17 +102,146 @@ void updateGameTime(Rect *t)
 
 }
 
+/*
+Sincroniza el inicio del juego, ya que necesitamos que los cohetes empiecen 
+a moverse según el tiempo del PIC que es el más lerdo
+*/
+void syncGame()
+{
+    int i, n;
+    uint16_t mark;
+    while (1)
+    {
+        Serial_Write(&SendInit, 2);
 
+        n = Serial_available();
+
+        if (n > 2)
+        {
+            Serial_Read(&mark, 2);
+
+            if (mark == SendAck)
+            {
+                break;
+            }
+
+            Serial_clear();
+        }
+        
+        Delay_ms(200);
+        
+        
+    }
+    
+}
+
+/*
+Pinto, borro y MUEVO los asteroides, además, cada que termina de hacer esto
+mando una marca por UART->SendUpdateAst
+Por si fuera poco, aqui tambien verifico colision de los cohetes con jugadores
+*/
+void moveAndCheckAsteroids(Rect *s)
+{
+    uint8_t i;
+    for (i = 0; i < NUM_ASTEROIDS; i++)
+    {
+        if (check_collision(s[i], playerOne.rect))
+        {
+            playerOne.rect.y = 55;
+            Serial_Write(&SendPlayer, 2);
+            Serial_Write(&playerOne.rect, sizeof(Rect));
+        }
+        
+        draw_horizontal_line(s[i], ERASE);
+
+        if ((i % 2) == 1)
+        {
+            if (s[i].x <= 0)
+            {
+                s[i].x = 124;
+            }
+            s[i].x--;
+        }
+        else
+        {
+            if (s[i].x >= 124)
+            {
+                s[i].x = 0;
+            }
+            s[i].x++;
+        }
+        draw_horizontal_line(s[i], DRAW);
+    }
+    //aqui debo de enviar marca de tiempo, siempre, ya que sincroniza la jugada
+    Serial_Write(&SendUpdateAst, 2);
+}
+
+
+/*
+lee de UART la marca:
+-> SendTime, que permite activar un flag para actualizar el tiempo
+-> SendPlayer, actualiza la posicion del player dos
+*/
+void updateData() {
+    int n;
+    uint16_t mark;
+
+    while (1)
+    {
+    
+        n = Serial_available();
+        if (n >= (2)) {
+            Serial_Read(&mark, 2);
+
+            if (mark == SendTime) {
+                flag = 1;
+                continue;
+            }
+
+            if (mark == SendPlayer)
+            {
+                Serial_Read(&playerTwo.rect, sizeof(Rect));
+                continue;
+            }
+
+            if (mark == SendPlayerX)
+            {
+                Serial_Read(&playerTwo.rect, sizeof(Rect));
+                continue;
+            }
+            
+            if (mark == SendScore)
+            {
+                flagScore = 1;
+                continue;
+            }
+
+            if (mark == SendTimeOut)
+            {
+                flagTimeOut = 1;
+                continue;
+            }
+
+            Serial_clear();
+        }
+
+        return;
+    }
+
+}
 
 
 void main() {
     
     state = 0;
 
-    init_game();
     ADCON1 = 0x0F; 
-    Glcd_Init();
     Serial_Init();
+    Serial_clear();
+    randomSeed(33);
+    init_game();
+    Glcd_Init();
+    Glcd_Fill(0x00);
     InitTimer0();
 
     while (1)
@@ -265,13 +282,7 @@ void main() {
                 draw_box(timer, DRAW);
                 draw_partial_image(playerPC.rect, ship);
                 draw_partial_image(playerOne.rect, ship);
-                for (i = 0; i <= NUM_ASTEROIDS - 1; i++){
-                    draw_horizontal_line(m[i], DRAW);
-                }
                 Delay_ms(60);
-                for (i = 0; i <= NUM_ASTEROIDS - 1; i++){
-                    draw_horizontal_line(m[i], ERASE);
-                }
                 draw_box(timer, ERASE);
                 draw_partial_image(playerOne.rect, parche);
                 draw_partial_image(playerPC.rect, parche);
@@ -284,123 +295,92 @@ void main() {
             break;
 
         case MULTIPLAYER:
+            randomSeed(33);
             init_game();
-            draw_clear();
             TMR0IE_bit    = 0;     //deshabilito la interrupcion por timer0, ya que me hace freezeado el micro
-            
-            whoAmI = syncPlayer();
-            Serial_clear();
-            Delay_ms(2000);
-            
-            forceSendPlayer();
-            //draw_partial_image(playerTwo.rect, ship);
-            //draw_partial_image(playerOne.rect, ship);
+            syncGame();    
+            draw_score(scoreA, scoreB);
             while (1)
             {
+                moveAndCheckAsteroids(m);
                 updateData();
 
-
-                // mueve mi jugador
-                if (whoAmI == 1) {
-                    playerTwo = moveAnother(playerTwo);
-                    
-                    key = readKeys();
-                    if (key.up)
-                    {
-                        playerOne.rect.y--;
-                    }
-                    else if (key.down)
-                    {
-                        playerOne.rect.y++;
-                    } 
-
-
-                    if (isPlayerNeedSend(playerOne)) {
-                        Serial_Write(&SendPlayer, 2);
-                        Serial_Write(&playerOne, sizeof(Splite));                
-                    }
+                if (flag)
+                {
+                    timer.y++;
+                    flag = 0;
                 }
 
-                if (whoAmI == 2) {
-                    playerOne = moveAnother(playerOne);
-
-                    key = readKeys();
-                    if (key.up)
-                    {
-                        playerTwo.rect.y--;
-                    }
-                    else if (key.down)
-                    {
-                        playerTwo.rect.y++;
-                    } 
-                    if (isPlayerNeedSend(playerTwo)) {
-                        Serial_Write(&SendPlayer, 2);
-                        Serial_Write(&playerTwo, sizeof(Splite));                
-                    }
-                    
+                if (flagScore)
+                {
+                    flagScore = 0;
+                    scoreB++;
+                    draw_score(scoreA, scoreB);
                 }
 
+                key = readKeys();
 
+                if (key.up)
+                {
+                    //puede crearse la funcion move_player
+                    playerOne.rect.y--;
+                    if (playerOne.rect.y <= 0){
+                        playerOne.rect.x = 32;
+                        playerOne.rect.y = 55;
+                        scoreA++;
+                        Serial_Write(&SendScore, 2);
+                        draw_score(scoreA, scoreB);
+                    }
+                    Serial_Write(&SendPlayer, 2);
+                    Serial_Write(&playerOne.rect, sizeof(Rect));
+                }
+                
+                if (key.down)
+                {
+                    playerOne.rect.y++;
+                    if (playerOne.rect.y + (playerOne.rect.h - 1) >= 63){
+                        playerOne.rect.y = 55;
+                    }
+                    Serial_Write(&SendPlayer, 2);
+                    Serial_Write(&playerOne.rect, sizeof(Rect));
+                }
 
-                /*
-                //aqui verifico si el tiempo se acabo, reinicia todo y lanza un frame
-                //ahora en este modo tengo que recivir el flag por uart
-                //updateGameTime(&timer);
+                if (flagTimeOut)
+                {
+                    flagTimeOut = 0;
+                    if (scoreA > scoreB)
+                    {
+                        draw_winFrame();
+                    }
+
+                    else if (scoreB > scoreA)
+                    {
+                        draw_loseFrame();
+                    }
+
+                    else
+                    {
+                        draw_loseFrame();
+                    }  
+
+                    init_game();
+                    state = MENU;   
+                }
                 if (state == MENU)
                 {
                     draw_clear();
                     break;
                 }
-
-
-
-                key = readKeys();
-                if (key.up)
-                {
-                    playerOne.rect.y--;
-                }
-                else if (key.down)
-                {
-                    playerOne.rect.y++;
-                } 
-            
                 
-                Serial_Write(&SendPlayer , 2);
-                Serial_Write(&playerOne, sizeof(Splite));
-
-
-                while(1)
-                {
-                    num = Serial_available();
-                    //draw_score(playerOne.y, num);
-                    if (num >= (2 + sizeof(Splite)))
-                    {
-                        Serial_Read(&mark, 2);
-                        //draw_score(playerTwo.y, markUART);
-
-                        if (mark == SendPlayer)
-                        {
-                            Serial_Read(&playerTwo, sizeof(Splite));
-                            continue;
-                        }
-                        Serial_clear();
-                    }
-                    break;  
-                }
-
-                if (playerOne.rect.y == 0)
-                {
-                    init_game();
-                    state = MENU;
-                }
-                */
-                
-                draw_partial_image(playerTwo.rect, ship);
+                //pinto y borro, el tiempo y jugadores
+                draw_box(timer, DRAW);
                 draw_partial_image(playerOne.rect, ship);
-                Delay_ms(45);
+                draw_partial_image(playerTwo.rect, ship);
+                Delay_ms(60);
+                draw_box(timer, ERASE);
                 draw_partial_image(playerOne.rect, parche);
                 draw_partial_image(playerTwo.rect, parche);
-
+                
             }
             
             break;
