@@ -152,7 +152,7 @@ void one_player()
           draw_horizontal_line(m[i],1);
       }
   		draw_score(scoreA, scoreB);
-      SDL_Delay(150);
+      SDL_Delay(140);
       refresh_sdl();
   }
 }

@@ -2,7 +2,7 @@
 
 GIT:
 	git add .
-	git commit -am "Traduciendo las funciones a SDL2"
+	git commit -am "Actualizando el juego en SDL"
 	git push
 PC:
 	git stash
