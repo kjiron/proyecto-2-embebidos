@@ -2,7 +2,7 @@
 
 GIT:
 	git add .
-	git commit -am "Actualizando el juego en SDL"
+	git commit -am "Se ha traducido la mayor parte del multijugador a SDL"
 	git push
 PC:
 	git stash

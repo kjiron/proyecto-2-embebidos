@@ -32,8 +32,8 @@ typedef struct objeto
 
 typedef struct
 {
-  int8_t x, y;
-  int8_t w, h;
+  int x, y;
+  int w, h;
 } Rect;
 
 typedef struct
@@ -95,7 +95,7 @@ void draw_loseFrame(){
   SDL_Delay(4000);
 }
 
-void draw_box( Rect r, int color) {
+void draw_box1( Rect r, int color) {
   
   int a,b = 0xffffffff;
 
@@ -149,12 +149,12 @@ void draw_circle(Rect circle, int color) {
 
   else if (color == 0)
   {
-    draw_box(circle,0);
+    draw_box1(circle,0);
   }
 }
 
-void draw_horizontal_line(Rect asteroid, int color){
-  draw_box(asteroid, color);
+void draw_horizontal_line1(Rect asteroid, int color){
+  draw_box1(asteroid, color);
 }
 
 int draw_MenuGame(int modeGame)
@@ -227,8 +227,7 @@ void draw_partial_image(Rect player) {
   }
 }
 
-void draw_score(uint8_t a, uint8_t b){
-
+void draw_score(int a, int b){
   SDL_Rect src_a;
   SDL_Rect src_b;
   SDL_Rect dest_a;
