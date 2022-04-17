@@ -14,10 +14,7 @@
 */
 #define NUM_ASTEROIDS 13
 
-
-
 //int init(int w, int h, int argc, char *args[]);
-
 
 /*
 Intenta replicar el delay en pic
@@ -35,9 +32,6 @@ typedef struct
   int8_t w, h;
 } Recta;
 
-
-
-
 /*
 marcas necesarias para el juego
 */
@@ -50,17 +44,10 @@ uint16_t SendPlayerX    = 0x9666;
 uint16_t SendScore      = 0x9777;
 uint16_t SendTimeOut    = 0x9888;
 
-
-
-
-
-
-
-int width, height;		//used if fullscreen
-
+//int width, height;		//used if fullscreen
+int delaysist = 0;
 //SDL_Window* window = NULL;	//The window we'll be rendering to
 //SDL_Renderer *renderer;		//The renderer SDL will use to draw to the screen
-
 
 Rect timer, playerOne, playerTwo;
 Recta Uart_playerOne, Uart_playerTwo;
@@ -164,7 +151,7 @@ void updateAsteroids()
             
             if (mark == SendPlayer)
             {
-                printf("Recv player from PIC\n");
+                //printf("Recv player from PIC\n");
                 Serial_Read(&Uart_playerTwo, sizeof(Recta));
                 playerTwo.y = Uart_playerTwo.y*scale_y;
                 continue;
@@ -172,7 +159,7 @@ void updateAsteroids()
 
             if (mark == SendPlayerX)
             {
-                printf("Recv NEW player from PIC\n");
+                //printf("Recv NEW player from PIC\n");
                 Serial_Read(&Uart_playerOne, sizeof(Recta));
                 playerOne.y = Uart_playerOne.y*scale_y;
                 continue;
@@ -183,7 +170,7 @@ void updateAsteroids()
                 scoreA++;
                 continue;
             }
-            printf("playerTwo.y: %i\nplayerTwo.x: %i\n",playerTwo.y, playerTwo.x);
+            //printf("playerTwo.y: %i\nplayerTwo.x: %i\n",playerTwo.y, playerTwo.x);
 
             Serial_clear();
         }
@@ -191,7 +178,6 @@ void updateAsteroids()
     }
     
 }
-
 
 /*
 detecto colision
@@ -204,7 +190,6 @@ bool check_collision(Rect rect1, Rect rect2)
        rect1.h + rect1.y > rect2.y;
 }
 
-
 /*
 muevo los asteroides segun la marca de tiempo y envio si existe una colision con los cohetes
 */
@@ -212,47 +197,45 @@ void moveAsteroids(Rect *s)
 {
     if (flagMove)
     {
-        flagMove = 0;
 
-        
-        
+        flagMove = 0;
 
         for (size_t i = 0; i < NUM_ASTEROIDS; i++)
         {
 
             if (check_collision(s[i], playerOne))
             {
+
                 playerOne.y = 550;
                 Uart_playerOne.y = playerOne.y/scale_y;
                 Serial_Write(&SendPlayerX, 2);
                 Serial_Write(&Uart_playerOne, sizeof(Recta));
 
             }
-
             
             if ((i % 2) == 1)
             {
+
                 if (s[i].x <= 0)
                 {
                     s[i].x = 1240;
                 }
             	s[i].x = s[i].x - scale_x;
+            
             }
 
             else
             {
+
                 if (s[i].x >= 1240)
                 {
                     s[i].x = 0;
                 }
                 s[i].x = s[i].x + scale_x;
-            }
             
+            }
         }
-        
     }
-    
-    
 }
 
 /*
@@ -260,6 +243,7 @@ aqui vamos a sincronizar el inicio
 */
 void syncGame()
 {
+
     int n;
     uint16_t mark;
 
@@ -270,18 +254,22 @@ void syncGame()
 
         if (n >= 2)
         {
+
             Serial_Read(&mark, 2);
             printf("mark: {%d}\n", mark);
             
             if (mark == SendInit)
             {
+
                 printf("Sincronizados\n");
                 Serial_Write(&SendAck, 2);
                 printf("Enviando ACK {%d}\n", SendAck);
 
                 break;
             }
+
             Serial_clear();
+
         }
     }
 }
@@ -292,6 +280,7 @@ imagenes en PIC son 9x9
 */
 void initGame()
 {
+
     playerOne.x = 940;
     playerOne.y = 550;
     playerOne.w = 90;
@@ -312,7 +301,6 @@ void initGame()
     Uart_playerTwo.w = 9;
     Uart_playerTwo.h = 9;
 
-
 }
 
 
@@ -331,10 +319,8 @@ void move_player(int d) {
             playerOne.y = 550;
 			//printf("player.y %i\n", playerOne.y );
         }
-		
-        
-        
-        SDL_Delay(75);
+
+        //SDL_Delay(delaysist);
 
     }
 
@@ -348,42 +334,11 @@ void move_player(int d) {
             playerOne.y = 550;
         }
         
-        SDL_Delay(75);
+        //SDL_Delay(delaysist);
 
     }
 
 }
-
-/*
-pinta a los jugadores
-
-static void draw_pixel() {
-
-	SDL_Rect srcOne, srcTwo;
-	//printf("pintando la picha\n");
-	
-	srcOne.x = playerOne.x;
-	srcOne.y = playerOne.y;
-	srcOne.w = playerOne.w;
-	srcOne.h = playerOne.h;
-
-	srcTwo.x = playerTwo.x;
-	srcTwo.y = playerTwo.y;
-	srcTwo.w = playerTwo.w;
-	srcTwo.h = playerTwo.h;
-
-	int r = SDL_FillRect(screen, &srcOne, 0xffffffff);
-	int a = SDL_FillRect(screen, &srcTwo, 0xffffffff);
-
-		
-	if (r !=0){
-	
-		printf("fill rectangle faliled in func draw_paddle()");
-	}
-
-}
-*/
-
 
 int main (int argc, char *args[]) {
 	
@@ -394,19 +349,19 @@ int main (int argc, char *args[]) {
     double elapsed;
     Rect m[NUM_ASTEROIDS];
 
-
-
 	//SDL Window setup
 	if (SDL_init(SCREEN_WIDTH, SCREEN_HEIGHT, argc, args) == 1) {
 		
 		return 0;
 	}
-	SDL_GetWindowSize(window, &width, &height);
+	//SDL_GetWindowSize(window, &width, &height);
 	Uint32 next_game_tick = SDL_GetTicks();
 
-
     Serial_Init("/dev/ttyUSB0", B19200);//PC
+    //delaysist = 10;//delay del juego en ms
     //Serial_Init("/dev/ttyS0", B19200);//Ras
+
+
     randomSeed(33);
     initEnvironment(m);
     initGame();
@@ -415,12 +370,9 @@ int main (int argc, char *args[]) {
     time(&begin_s); 
     //printf("{%d}s\n", i);
 
-
-
 	while (quit == 0)
 	{
         
-
         //parte de pintado en SDL
         SDL_RenderClear(renderer);
         SDL_FillRect(screen, NULL, 0x000000ff);
@@ -460,15 +412,12 @@ int main (int argc, char *args[]) {
         //pinto asteroides, tiempo y jugadores
 		draw_horizontal_line(m);
         
-
         draw_box(timer);
 		//draw_pixel();
 		draw_partial_image(playerTwo);
 		draw_partial_image(playerOne);
 		draw_score(scoreA, scoreB);
-        printf("Score: {%i},{%i}\n", scoreA, scoreB);
-
-
+        //printf("Score: {%i},{%i}\n", scoreA, scoreB);
 
 		SDL_UpdateTexture(screen_texture, NULL, screen->pixels, screen->w * sizeof (Uint32));
 		SDL_RenderCopy(renderer, screen_texture, NULL, NULL);
@@ -481,7 +430,6 @@ int main (int argc, char *args[]) {
             				
 			SDL_Delay(sleep_sdl);
 		}
-
 
         time(&end_s);
         elapsed = difftime(end_s, begin_s);
@@ -512,15 +460,13 @@ int main (int argc, char *args[]) {
                 {
                     draw_loseFrame();
                 }
-                
-                
-                
 
                 quit = 1;
             }
 
             time(&begin_s);
         }
+        //Delay_ms(delaysist);
 	}
 
 	//liberar memoria
@@ -532,100 +478,5 @@ int main (int argc, char *args[]) {
 	SDL_DestroyWindow(window);
 	SDL_Quit(); 
 
-
-
 	return 0;
 }
-
-
-/*
-int init(int width, int height, int argc, char *args[]) {
-
-	//Initialize SDL
-	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-
-		printf("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
-		
-		return 1;
-	} 
-	
-	int i;
-	
-	for (i = 0; i < argc; i++) {
-		
-		//Create window	
-		if(strcmp(args[i], "-f")) {
-			
-			SDL_CreateWindowAndRenderer(SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN, &window, &renderer);
-		
-		} else {
-		
-			SDL_CreateWindowAndRenderer(SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_FULLSCREEN_DESKTOP, &window, &renderer);
-		}
-	}
-
-	if (window == NULL) { 
-		
-		printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());
-		
-		return 1;
-	}
-
-	//create the screen sruface where all the elemnts will be drawn onto (ball, paddles, net etc)
-	screen = SDL_CreateRGBSurfaceWithFormat(0, width, height, 32, SDL_PIXELFORMAT_RGBA32);
-	
-	if (screen == NULL) {
-		
-		printf("Could not create the screen surfce! SDL_Error: %s\n", SDL_GetError());
-
-		return 1;
-	}
-
-	//create the screen texture to render the screen surface to the actual display
-	screen_texture = SDL_CreateTextureFromSurface(renderer, screen);
-
-	if (screen_texture == NULL) {
-		
-		printf("Could not create the screen_texture! SDL_Error: %s\n", SDL_GetError());
-
-		return 1;
-	}
-
-	//Load the title image
-	title = SDL_LoadBMP("title.bmp");
-
-	if (title == NULL) {
-		
-		printf("Could not Load title image! SDL_Error: %s\n", SDL_GetError());
-
-		return 1;
-	}
-	
-	//Load the numbermap image
-	numbermap = SDL_LoadBMP("numbermap.bmp");
-
-	if (numbermap == NULL) {
-		
-		printf("Could not Load numbermap image! SDL_Error: %s\n", SDL_GetError());
-
-		return 1;
-	}
-	
-	//Load the gameover image
-	end = SDL_LoadBMP("gameover.bmp");
-
-	if (end == NULL) {
-		
-		printf("Could not Load title image! SDL_Error: %s\n", SDL_GetError());
-
-		return 1;
-	}
-	
-	// Set the title colourkey. 
-	Uint32 colorkey = SDL_MapRGB(title->format, 255, 0, 255);
-	SDL_SetColorKey(title, SDL_TRUE, colorkey);
-	SDL_SetColorKey(numbermap, SDL_TRUE, colorkey);
-	
-	return 0;
-}
-*/

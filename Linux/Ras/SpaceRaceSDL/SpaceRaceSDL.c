@@ -240,14 +240,14 @@ void updateData() {
 
             if (mark == SendPlayer)
             {
-                Serial_Read(&Uart_playerTwo, sizeof(Rect));
+                Serial_Read(&Uart_playerTwo, sizeof(Recta));
                 playerTwo.rect.y = Uart_playerTwo.y*scale_y;
                 continue;
             }
 
             if (mark == SendPlayerX)
             {
-                Serial_Read(&Uart_playerTwo, sizeof(Rect));
+                Serial_Read(&Uart_playerTwo, sizeof(Recta));
                 playerTwo.rect.y = Uart_playerTwo.y*scale_y;
                 continue;
             }
@@ -266,7 +266,7 @@ void updateData() {
 
             Serial_clear();
         }
-        printf("playerTwo.y: %i\n", playerTwo.rect.y );
+        //printf("playerTwo.y: %i\n", playerTwo.rect.y );
         return;
     }
 }
@@ -308,7 +308,6 @@ void multiplayer()
 	randomSeed(33);
 	init_game();
 	syncGame();
-	draw_score(scoreA, scoreB);
 
 	while(quit==0)
 	{
@@ -318,7 +317,7 @@ void multiplayer()
 
 		if (flag)
 		{
-			timer.y++;
+      timer.y = timer.y + scale_y;
 			flag = 0;
 		}
 
@@ -326,7 +325,6 @@ void multiplayer()
 		{
 		  flagScore = 0;
 		  scoreB++;
-		  draw_score(scoreA, scoreB);
 		}
 
 		key = readKeys();
@@ -339,7 +337,6 @@ void multiplayer()
 				playerOne.rect.y = 550;
 				scoreA++;
 				Serial_Write(&SendScore, 2);
-				draw_score(scoreA, scoreB);
 			}
 			Serial_Write(&SendPlayer, 2);
 			Uart_playerOne.y = playerOne.rect.y/scale_y;
@@ -389,8 +386,8 @@ void multiplayer()
 		draw_partial_image(playerOne.rect);
 		draw_partial_image(playerTwo.rect);
 		draw_asteroids(m);
-  	//draw_score(scoreA, scoreB);
-		Delay_ms(60);
+  	draw_score(scoreA, scoreB);
+		Delay_ms(140);
     refresh_sdl();
 
 	}
@@ -451,32 +448,7 @@ int main (int argc, char *args[]) {
 		default:
 		    break;
 		}
-/*
-		if (state == 3){		
-			if (keystate[SDL_SCANCODE_SPACE]) {
-				state = 0;
-				//delay for a little bit so the space bar press dosnt get triggered twice
-				//while the main menu is showing
-            	SDL_Delay(500);
-			}
-				
-		//display the game
-		}
-		if (state == 2){
-			
-			//draw paddles
 
-			draw_partial_image(playerOne.rect);
-			draw_partial_image(playerPC.rect);
-			draw_box(timer,1);
-			draw_score(0,0);
-			for (int i = 0; i <= NUM_ASTEROIDS - 1; i++){
-          draw_horizontal_line(m[i],1);
-      }
-		//State_Machine(ONEPLAYER);
-			//printf("paddle[0].y = %i \npaddle[1].y = %i \n",paddle[0].y/2,paddle[1].y/2 );
-		}
-	*/
 		refresh_sdl();
 
 		//time it takes to render  frame in milliseconds
