@@ -165,17 +165,16 @@ void updateAsteroids()
             if (mark == SendPlayer)
             {
                 printf("Recv player from PIC\n");
-                Serial_Read(&Uart_playerTwo, sizeof(Rect));
+                Serial_Read(&Uart_playerTwo, sizeof(Recta));
                 playerTwo.y = Uart_playerTwo.y*scale_y;
-                //printf("playerTwo.y: %i\nplayerTwo.x: %i\n",playerTwo.y, playerTwo.x);
                 continue;
             }
 
             if (mark == SendPlayerX)
             {
                 printf("Recv NEW player from PIC\n");
-                Serial_Read(&Uart_playerOne, sizeof(Rect));
-                playerOne.y = Uart_playerOne.y*scale_y;	
+                Serial_Read(&Uart_playerOne, sizeof(Recta));
+                playerOne.y = Uart_playerOne.y*scale_y;
                 continue;
             }
 
@@ -184,7 +183,7 @@ void updateAsteroids()
                 scoreA++;
                 continue;
             }
-            
+            printf("playerTwo.y: %i\nplayerTwo.x: %i\n",playerTwo.y, playerTwo.x);
 
             Serial_clear();
         }
@@ -226,7 +225,7 @@ void moveAsteroids(Rect *s)
                 playerOne.y = 550;
                 Uart_playerOne.y = playerOne.y/scale_y;
                 Serial_Write(&SendPlayerX, 2);
-                Serial_Write(&Uart_playerOne, sizeof(Rect));
+                Serial_Write(&Uart_playerOne, sizeof(Recta));
 
             }
 
@@ -406,7 +405,8 @@ int main (int argc, char *args[]) {
 	Uint32 next_game_tick = SDL_GetTicks();
 
 
-    Serial_Init("/dev/ttyUSB0", B19200);
+    Serial_Init("/dev/ttyUSB0", B19200);//PC
+    //Serial_Init("/dev/ttyS0", B19200);//Ras
     randomSeed(33);
     initEnvironment(m);
     initGame();
@@ -441,7 +441,7 @@ int main (int argc, char *args[]) {
 			move_player(0);
 			Serial_Write(&SendPlayer, 2);
 			Uart_playerOne.y = playerOne.y/scale_y;
-			Serial_Write(&Uart_playerOne, sizeof(Rect));
+			Serial_Write(&Uart_playerOne, sizeof(Recta));
             //SDL_Delay(15);
 
 		}
@@ -451,7 +451,7 @@ int main (int argc, char *args[]) {
 			move_player(1);
 			Serial_Write(&SendPlayer, 2);
 			Uart_playerOne.y = playerOne.y/scale_y;
-			Serial_Write(&Uart_playerOne, sizeof(Rect));
+			Serial_Write(&Uart_playerOne, sizeof(Recta));
             //SDL_Delay(15);
 		}
 

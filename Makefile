@@ -2,7 +2,7 @@
 
 GIT:
 	git add .
-	git commit -am "Haciendo pruebas Ras-PC"
+	git commit -am "Corrigiendo errores Ras-PC"
 	git push
 PC:
 	git stash

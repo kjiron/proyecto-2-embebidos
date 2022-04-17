@@ -188,7 +188,7 @@ void moveAndCheckAsteroids(Rect *s)
             playerOne.rect.y = 550;
             Uart_playerOne.y = playerOne.rect.y/scale_y;
             Serial_Write(&SendPlayer, 2);
-            Serial_Write(&Uart_playerOne, sizeof(Rect));
+            Serial_Write(&Uart_playerOne, sizeof(Recta));
         }
         
         //draw_horizontal_line(s[i], ERASE);
@@ -240,13 +240,15 @@ void updateData() {
 
             if (mark == SendPlayer)
             {
-                Serial_Read(&playerTwo.rect, sizeof(Rect));
+                Serial_Read(&Uart_playerTwo, sizeof(Rect));
+                playerTwo.rect.y = Uart_playerTwo.y*scale_y;
                 continue;
             }
 
             if (mark == SendPlayerX)
             {
-                Serial_Read(&playerTwo.rect, sizeof(Rect));
+                Serial_Read(&Uart_playerTwo, sizeof(Rect));
+                playerTwo.rect.y = Uart_playerTwo.y*scale_y;
                 continue;
             }
             
@@ -264,7 +266,7 @@ void updateData() {
 
             Serial_clear();
         }
-
+        printf("playerTwo.y: %i\n", playerTwo.rect.y );
         return;
     }
 }
@@ -341,7 +343,7 @@ void multiplayer()
 			}
 			Serial_Write(&SendPlayer, 2);
 			Uart_playerOne.y = playerOne.rect.y/scale_y;
-			Serial_Write(&Uart_playerOne, sizeof(Rect));
+			Serial_Write(&Uart_playerOne, sizeof(Recta));
 		}
 
 		if (key.down)
@@ -351,7 +353,8 @@ void multiplayer()
 				playerOne.rect.y = 550;
 			}
 			Serial_Write(&SendPlayer, 2);
-			Serial_Write(&playerOne.rect, sizeof(Rect));
+			Uart_playerOne.y = playerOne.rect.y/scale_y;
+			Serial_Write(&Uart_playerOne, sizeof(Recta));
 		}
 
 		if (flagTimeOut)
