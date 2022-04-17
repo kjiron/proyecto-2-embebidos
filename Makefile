@@ -2,7 +2,7 @@
 
 GIT:
 	git add .
-	git commit -am "Acomodo de archivos para diferenciar los de linux de los de Ras"
+	git commit -am "Haciendo pruebas Ras-PC"
 	git push
 PC:
 	git stash

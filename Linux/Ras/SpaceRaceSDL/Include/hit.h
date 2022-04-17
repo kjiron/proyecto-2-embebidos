@@ -5,9 +5,6 @@
 #include "random.h"
 #include "keys.h"
 
-#define ERASE           0
-#define DRAW            1
-#define NUM_ASTEROIDS   13
 
 int x = 0;
 int scoreA = 0, scoreB = 0;

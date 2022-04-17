@@ -6,6 +6,9 @@
 
 #define SCREEN_WIDTH 1280 //window height
 #define SCREEN_HEIGHT 640 //window width
+#define NUM_ASTEROIDS   13
+#define ERASE           0
+#define DRAW            1
 
 int scale_x = SCREEN_WIDTH/128;
 int scale_y = SCREEN_HEIGHT/64;
@@ -274,6 +277,14 @@ void draw_score(uint8_t a, uint8_t b){
   if (r !=0)
   {
     printf("fill rectangle faliled in func draw_score(b)");
+  }
+}
+
+void draw_asteroids(Rect *m)
+{
+  for (int i = 0; i <= NUM_ASTEROIDS - 1; i++)
+  {
+    draw_horizontal_line(m[i],DRAW);
   }
 }
 

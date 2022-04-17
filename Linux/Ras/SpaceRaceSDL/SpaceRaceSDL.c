@@ -153,7 +153,7 @@ void syncGame()
     {
         Serial_Write(&SendInit, 2);
 
-        n = Serial_available();
+        n = Serial_Available();
 
         if (n > 2)
         {
@@ -191,7 +191,7 @@ void moveAndCheckAsteroids(Rect *s)
             Serial_Write(&Uart_playerOne, sizeof(Rect));
         }
         
-        draw_horizontal_line(s[i], ERASE);
+        //draw_horizontal_line(s[i], ERASE);
 
         if ((i % 2) == 1)
         {
@@ -210,7 +210,7 @@ void moveAndCheckAsteroids(Rect *s)
             s[i].x = s[i].x + scale_x;
         }
 
-        draw_horizontal_line(s[i], DRAW);
+        //draw_horizontal_line(s[i], DRAW);
     }
     //aqui debo de enviar marca de tiempo, siempre, ya que sincroniza la jugada
     Serial_Write(&SendUpdateAst, 2);
@@ -229,7 +229,7 @@ void updateData() {
     while (1)
     {
     
-        n = Serial_available();
+        n = Serial_Available();
         if (n >= (2)) {
             Serial_Read(&mark, 2);
 
@@ -289,12 +289,10 @@ void one_player()
       playerPC = move_ai(playerPC, m);
 
       //draw_dot(playerPC, DRAW);
-      draw_box(timer,1);
+      draw_box(timer,DRAW);
       draw_partial_image(playerPC.rect);
       draw_partial_image(playerOne.rect);
-      for (i = 0; i <= NUM_ASTEROIDS - 1; i++){
-          draw_horizontal_line(m[i],1);
-      }
+      draw_asteroids(m);
   		draw_score(scoreA, scoreB);
       SDL_Delay(140);
       refresh_sdl();
@@ -303,12 +301,16 @@ void one_player()
 
 void multiplayer()
 {
+	draw_clear();
+  refresh_sdl();
 	randomSeed(33);
 	init_game();
 	syncGame();
 	draw_score(scoreA, scoreB);
+
 	while(quit==0)
 	{
+		draw_clear();
 		moveAndCheckAsteroids(m);
 		updateData();
 
@@ -381,12 +383,12 @@ void multiplayer()
 
 		//pinto y borro, el tiempo y jugadores
 		draw_box(timer, DRAW);
-		draw_partial_image(playerOne.rect, ship);
-		draw_partial_image(playerTwo.rect, ship);
+		draw_partial_image(playerOne.rect);
+		draw_partial_image(playerTwo.rect);
+		draw_asteroids(m);
+  	//draw_score(scoreA, scoreB);
 		Delay_ms(60);
-		draw_box(timer, ERASE);
-		draw_partial_image(playerOne.rect, parche);
-		draw_partial_image(playerTwo.rect, parche);
+    refresh_sdl();
 
 	}
 }
@@ -408,7 +410,6 @@ int main (int argc, char *args[]) {
   randomSeed(33);
   initEnvironment(m);
 	init_game();
-	syncGame();
 
 	//render loop
 	while(quit == 0) {
@@ -442,7 +443,7 @@ int main (int argc, char *args[]) {
 		    break;
 
 		case MULTIPLAYER: 
-		    printf("MULTIPLAYER\n");
+		    multiplayer();
 		    break;
 		default:
 		    break;
