@@ -30,19 +30,10 @@ typedef struct objeto
 
 } Objeto;
 
-/*
-Estructura generica ligera
-*/
 typedef struct
 {
   int8_t x, y;
   int8_t w, h;
-} Recta;
-
-typedef struct
-{
-  int x, y;
-  int w, h;
 } Rect;
 
 typedef struct

@@ -27,7 +27,7 @@ void Delay_ms(uint32_t s) {
 }
 
 /*
-Estructura generica
+Estructura generica ligera
 */
 typedef struct
 {

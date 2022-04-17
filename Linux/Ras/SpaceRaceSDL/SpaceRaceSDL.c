@@ -1,22 +1,11 @@
-
-//Using libs SDL, glibc
 #include <SDL.h>	//SDL version 2.0
+#include "Include/serial.h"
+#include "Include/random.h"
 #include <stdlib.h>
-#include <stdio.h>
-
-//Includes for UART--------------------------------------------------------
-#include <string.h>
+#include <stdint.h>
 #include <stdbool.h>
-
-// Linux headers
-#include <fcntl.h> // Contains file controls like O_RDWR
-#include <errno.h> // Error integer and strerror() function
-#include <termios.h> // Contains POSIX terminal control definitions
-#include <unistd.h> // write(), read(), close()
-#include <pthread.h>
-#include <sys/select.h>
-#include <arpa/inet.h> //inet_addr
-//------------------------------------------------------------------------
+#include <unistd.h>
+#include <time.h>
 
 #include "Include/keys.h"
 #include "Include/drawSDL2.h"
@@ -30,32 +19,46 @@
 
 //--------------------------------------------------------------------------
 
-// Program globals
-
-int whoAmI;
-int num = 0;
 int state = 0, modeGame = 0, i, timeFlag = 0, second = 0, lastsecond = 0;
 
+/*
+banderas ha utilizar en multiplayer
+*/
 
-uint16_t mark;
-uint16_t SendPlayer = 0x9669;
-uint16_t IamPlayer1 = 0x9666;
-uint16_t IamPlayer2 = 0x9667;
-int width, height;		//used if fullscreen
+uint16_t SendAck        = 0x9111;
+uint16_t SendInit       = 0x9222;
+uint16_t SendUpdateAst  = 0x9333;
+uint16_t SendPlayer     = 0x9444;
+uint16_t SendTime       = 0x9555;
+uint16_t SendPlayerX    = 0x9666;
+uint16_t SendScore      = 0x9777;
+uint16_t SendTimeOut    = 0x9888;
+
+//int width, height;		//used if fullscreen
 
 Rect m[NUM_ASTEROIDS], timer;//cuidado
 
+uint8_t flag = 0, flagScore = 0, flagTimeOut = 0;
 
 Splite playerOne, playerPC, playerTwo;
-Splite lastPosPlayer;
-Splite newPlayer;
 Keys key;
+
+
+Recta Uart_playerOne, Uart_playerTwo;
+
+/*
+Intenta replicar el delay en pic
+*/
+void Delay_ms(uint32_t s) {
+	SDL_Delay(s);
+}
 
 void init_game()
 {
     //variables necesarias para el control del juego
     scoreA = 0;
     scoreB = 0;
+    timeFlag = 0;
     modeGame = 0;
     //playerOne
     playerOne.rect.x = 320;
@@ -80,6 +83,18 @@ void init_game()
     timer.h = 600;    
     //seteo las pocisiones de los asteroides
     initEnvironment(m);
+
+    //para enviar por uart
+    Uart_playerOne.x = 94;
+    Uart_playerOne.y = 55;
+    Uart_playerOne.w = 9;
+    Uart_playerOne.h = 9;
+
+    Uart_playerTwo.x = 32;
+    Uart_playerTwo.y = 55;
+    Uart_playerTwo.w = 9;
+    Uart_playerTwo.h = 9;
+
 }
 
 void updateGameTime(Rect *t)
@@ -125,6 +140,135 @@ void updateGameTime(Rect *t)
 
 }
 
+
+/*
+Sincroniza el inicio del juego, ya que necesitamos que los cohetes empiecen 
+a moverse según el tiempo del PIC que es el más lerdo
+*/
+void syncGame()
+{
+    int i, n;
+    uint16_t mark;
+    while (1)
+    {
+        Serial_Write(&SendInit, 2);
+
+        n = Serial_available();
+
+        if (n > 2)
+        {
+            Serial_Read(&mark, 2);
+
+            if (mark == SendAck)
+            {
+                break;
+            }
+
+            Serial_clear();
+        }
+        
+        Delay_ms(200);
+               
+    }
+    
+}
+
+/*
+Pinto, borro y MUEVO los asteroides, además, cada que termina de hacer esto
+mando una marca por UART->SendUpdateAst
+Por si fuera poco, aqui tambien verifico colision de los cohetes con jugadores
+*/
+void moveAndCheckAsteroids(Rect *s)
+{
+    uint8_t i;
+    for (i = 0; i < NUM_ASTEROIDS; i++)
+    {
+        if (check_collision(s[i], playerOne.rect))
+        {
+            playerOne.rect.y = 550;
+            Uart_playerOne.y = playerOne.rect.y/scale_y;
+            Serial_Write(&SendPlayer, 2);
+            Serial_Write(&Uart_playerOne, sizeof(Rect));
+        }
+        
+        draw_horizontal_line(s[i], ERASE);
+
+        if ((i % 2) == 1)
+        {
+            if (s[i].x <= 0)
+            {
+                s[i].x = 1240;
+            }
+            s[i].x = s[i].x - scale_x;
+        }
+        else
+        {
+            if (s[i].x >= 1240)
+            {
+                s[i].x = 0;
+            }
+            s[i].x = s[i].x + scale_x;
+        }
+
+        draw_horizontal_line(s[i], DRAW);
+    }
+    //aqui debo de enviar marca de tiempo, siempre, ya que sincroniza la jugada
+    Serial_Write(&SendUpdateAst, 2);
+}
+
+
+/*
+lee de UART la marca:
+-> SendTime, que permite activar un flag para actualizar el tiempo
+-> SendPlayer, actualiza la posicion del player dos
+*/
+void updateData() {
+    int n;
+    uint16_t mark;
+
+    while (1)
+    {
+    
+        n = Serial_available();
+        if (n >= (2)) {
+            Serial_Read(&mark, 2);
+
+            if (mark == SendTime) {
+                flag = 1;
+                continue;
+            }
+
+            if (mark == SendPlayer)
+            {
+                Serial_Read(&playerTwo.rect, sizeof(Rect));
+                continue;
+            }
+
+            if (mark == SendPlayerX)
+            {
+                Serial_Read(&playerTwo.rect, sizeof(Rect));
+                continue;
+            }
+            
+            if (mark == SendScore)
+            {
+                flagScore = 1;
+                continue;
+            }
+
+            if (mark == SendTimeOut)
+            {
+                flagTimeOut = 1;
+                continue;
+            }
+
+            Serial_clear();
+        }
+
+        return;
+    }
+}
+
 void one_player()
 {
 	init_game();
@@ -157,24 +301,115 @@ void one_player()
   }
 }
 
+void multiplayer()
+{
+	randomSeed(33);
+	init_game();
+	syncGame();
+	draw_score(scoreA, scoreB);
+	while(quit==0)
+	{
+		moveAndCheckAsteroids(m);
+		updateData();
+
+		if (flag)
+		{
+			timer.y++;
+			flag = 0;
+		}
+
+		if (flagScore)
+		{
+		  flagScore = 0;
+		  scoreB++;
+		  draw_score(scoreA, scoreB);
+		}
+
+		key = readKeys();
+
+		if (key.up)
+		{
+			//puede crearse la funcion move_player
+			playerOne.rect.y = playerOne.rect.y - scale_y;
+			if (playerOne.rect.y <= 0){
+				playerOne.rect.y = 550;
+				scoreA++;
+				Serial_Write(&SendScore, 2);
+				draw_score(scoreA, scoreB);
+			}
+			Serial_Write(&SendPlayer, 2);
+			Uart_playerOne.y = playerOne.rect.y/scale_y;
+			Serial_Write(&Uart_playerOne, sizeof(Rect));
+		}
+
+		if (key.down)
+		{
+			playerOne.rect.y = playerOne.rect.y + scale_y;
+			if(playerOne.rect.y + (playerOne.rect.h - 10) >= 630){
+				playerOne.rect.y = 550;
+			}
+			Serial_Write(&SendPlayer, 2);
+			Serial_Write(&playerOne.rect, sizeof(Rect));
+		}
+
+		if (flagTimeOut)
+		{
+			flagTimeOut = 0;
+			if (scoreA > scoreB)
+			{
+			    draw_winFrame();
+			}
+
+			else if (scoreB > scoreA)
+			{
+			    draw_loseFrame();
+			}
+
+			else
+			{
+			    draw_loseFrame();
+			}  
+
+			init_game();
+			state = MENU;   
+		}
+		if (state == MENU)
+		{
+			draw_clear();
+			break;
+		}
+
+		//pinto y borro, el tiempo y jugadores
+		draw_box(timer, DRAW);
+		draw_partial_image(playerOne.rect, ship);
+		draw_partial_image(playerTwo.rect, ship);
+		Delay_ms(60);
+		draw_box(timer, ERASE);
+		draw_partial_image(playerOne.rect, parche);
+		draw_partial_image(playerTwo.rect, parche);
+
+	}
+}
+
 int main (int argc, char *args[]) {
-	
+
+	int sleep = 0;
+
 	//SDL Window setup
 	if (SDL_init(SCREEN_WIDTH, SCREEN_HEIGHT, argc, args) == 1) {
 		
 		return 0;
 	}
 	
-	SDL_GetWindowSize(window, &width, &height);
-	
-	int sleep = 0;
+	//SDL_GetWindowSize(window, &width, &height);
 	Uint32 next_game_tick = SDL_GetTicks();
 	
-	// Initialize the ball position data. 
+	Serial_Init("/dev/ttyUSB0", B19200);
+  randomSeed(33);
+  initEnvironment(m);
 	init_game();
+	syncGame();
 
-  Rect select_n = {250, 300, 30, 0};
-	
 	//render loop
 	while(quit == 0) {
 	
