@@ -120,7 +120,7 @@ void updateGameTime(Rect *t)
             state = MENU;
         }
 
-        else if (scoreB > scoreA)
+        else
         {
             draw_loseFrame();
             init_game();
