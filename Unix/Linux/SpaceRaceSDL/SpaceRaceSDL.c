@@ -188,7 +188,7 @@ void updateAsteroids()
                 playerTwo.rect.y = (int)Uart_playerTwo.y*scale_y;
                 continue;
             }
-            
+
             if (mark == SendPlayerX)
             {
                 //printf("Recv NEW player from PIC\n");
@@ -512,11 +512,12 @@ void multiplayer_slave()
 
 	randomSeed(33);
 	syncGame_slave();
-	init_game_slave();
 	time(&begin_s);
+	init_game_slave();
 
 	while(quit == 0)
 	{
+		printf("playerTwo.x: %i \n", playerTwo.rect.x);
 		draw_clear();
 
 		updateAsteroids();
@@ -557,7 +558,7 @@ void multiplayer_slave()
             i++;
 
             timer.y = timer.y + scale_y;
-            printf("{%i} \n", i );
+            //printf("{%i} \n", i );
             if (i == 60)
             {
                 //le mando una marca diciendo que el juego acabo
