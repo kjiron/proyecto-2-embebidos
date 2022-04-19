@@ -23,7 +23,7 @@ Splite move_player(Splite player, Rect *a)
    int i;
    key = readKeys();
 
-   for (i = 0; i <= NUM_ASTEROIDS - 1; i++){
+   for (i = 0; i < NUM_ASTEROIDS; i++){
       if (check_collision(a[i], player.rect))
       {
          //player.rect.x = 320;
@@ -95,7 +95,7 @@ Splite move_ai(Splite pc, Rect *a)
 {
    int i, luck;
    luck = randint(0, 200);
-   for (i = 0; i <= NUM_ASTEROIDS - 1; i++)
+   for (i = 0; i < NUM_ASTEROIDS; i++)
    {
       if (check_collision(a[i], pc.rect))
       {
@@ -144,7 +144,7 @@ void initEnvironment(Rect *s)
     int i, offset_x, offset_y;
     offset_x = 0;
     offset_y = 53*scale_y;
-    for (i = 0; i <= NUM_ASTEROIDS; i++)
+    for (i = 0; i < NUM_ASTEROIDS; i++)
     {        
         offset_x = randint(0, 123)*scale_x; 
         s[i].x = offset_x;
@@ -159,7 +159,7 @@ void initEnvironment(Rect *s)
 void environment(Rect *s)
 {
     int i;
-    for (i = 0; i <= NUM_ASTEROIDS - 1; i++)
+    for (i = 0; i < NUM_ASTEROIDS; i++)
     {
         if ((i % 2) == 1)
         {

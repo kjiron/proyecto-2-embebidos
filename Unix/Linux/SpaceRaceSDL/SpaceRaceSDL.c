@@ -185,7 +185,7 @@ void updateAsteroids()
             {
                 //printf("Recv player from PIC\n");
                 Serial_Read(&Uart_playerTwo, sizeof(Recta));
-                playerTwo.rect.y = (int)Uart_playerTwo.y*scale_y;
+                playerTwo.rect.y = Uart_playerTwo.y*scale_y;
                 continue;
             }
 
@@ -193,7 +193,7 @@ void updateAsteroids()
             {
                 //printf("Recv NEW player from PIC\n");
                 Serial_Read(&Uart_playerOne, sizeof(Recta));
-                playerOne.rect.y = (int)Uart_playerOne.y*scale_y;
+                playerOne.rect.y = Uart_playerOne.y*scale_y;
                 continue;
             }
 
@@ -345,7 +345,7 @@ void updateData() {
             if (mark == SendPlayer)
             {
                 Serial_Read(&Uart_playerTwo, sizeof(Recta));
-                playerTwo.rect.y = (int)Uart_playerTwo.y*scale_y;
+                playerTwo.rect.y = Uart_playerTwo.y*scale_y;
                 continue;
             }
 
@@ -517,7 +517,6 @@ void multiplayer_slave()
 
 	while(quit == 0)
 	{
-		printf("playerTwo.x: %i \n", playerTwo.rect.x);
 		draw_clear();
 
 		updateAsteroids();
@@ -651,9 +650,6 @@ int main (int argc, char **args) {
 	Uint32 next_game_tick = SDL_GetTicks();
 	
 	detect_os();
-  	randomSeed(33);
-  	initEnvironment(m);
-	init_game();
 
 	//render loop
 	while(quit == 0) {
