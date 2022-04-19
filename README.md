@@ -1,10 +1,10 @@
 # Sistemas empotrados heterogéneos
 
 ## ToDo KJiron
-- [x] [environment](/asteroidsDBG.c)  
-- [x] [time](/timerDBG.c) esta hecho por interrupción, hay que ver si da problema con el UART. Lo mejor sería implementar la función milis() para no tener 500ms quemados. 
-- [x] [hit](/hit.h) se detecta colision con el player y se reinicia en su posicion inicial.
-- [x] [moveAI](/hit.h) la AI no es la mejor del mundo pero funciona.
+- [x] [environment](/backup/PIC/asteroidsDBG.c)  
+- [x] [time](/backup/PIC/timerDBG.c) esta hecho por interrupción, hay que ver si da problema con el UART. Lo mejor sería implementar la función milis() para no tener 500ms quemados. 
+- [x] [hit](/backup/PIC/Include/hit.h) se detecta colision con el player y se reinicia en su posicion inicial.
+- [x] [moveAI](/backup/PIC/Include/hit.h) la AI no es la mejor del mundo pero funciona.
 - [x] recv posicion
 - [x] enviar por Uart posicion
 - [x] sincronizar, hay un pequeño bug, el cual es que muetra el player que lee por UART solo hasta que del otro lado se hizo un movimiento con el teclado.
@@ -24,10 +24,17 @@
 ## ToDo General
 
 - [x] recv time
-- [x] recv asteroides, [asteroidesMikroC](/asteroidsDBG.c) y [asteroidesLinux](/gameLinux/src/asteroids.c), esto funciona pero no es la forma ideal.
+- [x] recv asteroides, [asteroidesMikroC](/backup/asteroidsDBG.c) y [asteroidesLinux](/backup/gameLinux/src/asteroids.c), esto funciona pero no es la forma ideal.
 - [x] crear pseudo-aleatorio para replicar la misma serie en linux C y en el PIC
 - [x] sincronizar tiempo para mover los asteroides, según el delay del PIC
 - [x] agregar a los jugadores, enviados y recibidos
 - [x] recv score
 - [x] recv collision
 - [x] se puede enviar cuando hay una tecla presionada en el teclado de la PC o RAS para dejar de estar intentado tener el mejor delay a punta de prueba y error
+
+
+## Aclaraciones Finales
+
+- Al final del proyecto se concentró toda la programación de sistemas Unix en un solo código [SpaceRaceSDL-Unix](/Final/SpaceRaceSDL-Unix) con la forma de ejecución "make" para compilar y "make run slave=y/n" para ejecutar el juego en modo esclavo/maestro segun slave=y o slave=n respectivamente.
+- Se separaron las programaciones finales del [PIC](/Final/PIC) y [Unix](/Final/SpaceRaceSDL-Unix) en la carpeta [Final](/Final) y se guardaron las demás programaciones del proceso de creacion del proyecto dentro de la carpeta [backup](/backup)
+- Ya se probó exitosamente los casos PC-PIC, Ras-PIC y PC-Ras ejecutando para todos los casos las condiciones donde el jugador gana, el jugador pierde y el jugador empata, todas las condiciones en una misma partida sin reiniciar la programación.

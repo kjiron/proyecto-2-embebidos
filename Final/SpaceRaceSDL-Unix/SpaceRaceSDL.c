@@ -259,14 +259,14 @@ void syncGame_slave()
         {
 
             Serial_Read(&mark, 2);
-            printf("mark: {%d}\n", mark);
+            //printf("mark: {%d}\n", mark);
             
             if (mark == SendInit)
             {
 
-                printf("Sincronizados\n");
+                //printf("Sincronizados\n");
                 Serial_Write(&SendAck, 2);
-                printf("Enviando ACK {%d}\n", SendAck);
+                //printf("Enviando ACK {%d}\n", SendAck);
 
                 break;
             }
@@ -603,12 +603,12 @@ void detect_os()
 
 	if (!strcmp(uts.machine, "x86_64"))
 	{
-	    printf("Linux\n");
+	    //printf("Linux\n");
 		Serial_Init("/dev/ttyUSB0", B19200);
 	}
 	else if (!strcmp(uts.machine, "armv7l"))
 	{
-	    printf("Rasp\n");
+	    //printf("Rasp\n");
 		Serial_Init("/dev/ttyS0", B19200);
 	}
 	else
@@ -685,12 +685,12 @@ int main (int argc, char **args) {
 		case MULTIPLAYER: 
 			if (slave)
 			{
-				printf("MULTIPLAYER as slave\n");
+				//printf("MULTIPLAYER as slave\n");
 				multiplayer_slave();
 			}
 			else
 			{
-				printf("MULTIPLAYER as master\n");
+				//printf("MULTIPLAYER as master\n");
 			    multiplayer_master();
 			}
 		    break;

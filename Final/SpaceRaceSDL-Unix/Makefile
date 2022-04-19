@@ -13,3 +13,6 @@ random.o: Include/random.h Include/random.c
 run:
 	./SpaceRaceSDL $(slave)
 
+.PHONY: clean
+clean:
+	rm -rf *.o
