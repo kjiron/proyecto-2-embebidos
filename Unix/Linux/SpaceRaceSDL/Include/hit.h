@@ -7,7 +7,7 @@
 
 
 int x = 0;
-int scoreA = 0, scoreB = 0;
+uint8_t scoreA = 0, scoreB = 0;
 
 bool check_collision(Rect rect1, Rect rect2)
 {

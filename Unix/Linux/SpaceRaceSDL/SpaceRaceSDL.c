@@ -188,7 +188,7 @@ void updateAsteroids()
                 playerTwo.rect.y = (int)Uart_playerTwo.y*scale_y;
                 continue;
             }
-
+            
             if (mark == SendPlayerX)
             {
                 //printf("Recv NEW player from PIC\n");
