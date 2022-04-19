@@ -55,8 +55,8 @@ Estructura generica ligera
 */
 typedef struct
 {
-  int8_t x, y;
-  int8_t w, h;
+  uint8_t x, y;
+  uint8_t w, h;
 } Recta;
 
 typedef struct
