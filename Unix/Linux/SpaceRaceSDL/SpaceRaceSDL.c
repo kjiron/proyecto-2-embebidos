@@ -511,8 +511,8 @@ void multiplayer_slave()
 	refresh_sdl();
 
 	randomSeed(33);
-	init_game_slave();
 	syncGame_slave();
+	init_game_slave();
 	time(&begin_s);
 
 	while(quit == 0)
