@@ -53,10 +53,11 @@ typedef struct objeto
 /*
 Estructura generica ligera
 */
+
 typedef struct
 {
-  uint8_t x, y;
-  uint8_t w, h;
+  int8_t x, y;
+  int8_t w, h;
 } Recta;
 
 typedef struct

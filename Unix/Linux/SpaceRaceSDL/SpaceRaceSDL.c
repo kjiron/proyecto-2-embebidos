@@ -185,7 +185,7 @@ void updateAsteroids()
             {
                 //printf("Recv player from PIC\n");
                 Serial_Read(&Uart_playerTwo, sizeof(Recta));
-                playerTwo.rect.y = Uart_playerTwo.y*scale_y;
+                playerTwo.rect.y = (int)Uart_playerTwo.y*scale_y;
                 continue;
             }
 
@@ -193,7 +193,7 @@ void updateAsteroids()
             {
                 //printf("Recv NEW player from PIC\n");
                 Serial_Read(&Uart_playerOne, sizeof(Recta));
-                playerOne.rect.y = Uart_playerOne.y*scale_y;
+                playerOne.rect.y = (int)Uart_playerOne.y*scale_y;
                 continue;
             }
 
@@ -345,14 +345,14 @@ void updateData() {
             if (mark == SendPlayer)
             {
                 Serial_Read(&Uart_playerTwo, sizeof(Recta));
-                playerTwo.rect.y = Uart_playerTwo.y*scale_y;
+                playerTwo.rect.y = (int)Uart_playerTwo.y*scale_y;
                 continue;
             }
 
             if (mark == SendPlayerX)
             {
-                Serial_Read(&Uart_playerTwo, sizeof(Recta));
-                playerTwo.rect.y = Uart_playerTwo.y*scale_y;
+                Serial_Read(&Uart_playerOne, sizeof(Recta));
+                playerOne.rect.y = Uart_playerOne.y*scale_y;
                 continue;
             }
             
