@@ -10,8 +10,6 @@ serial.o: Include/serial.h Include/serial.c
 random.o: Include/random.h Include/random.c
 	$(CC) -c Include/random.h Include/random.c
 
-runf:
-	./SpaceRaceSDL -f
-
 run:
-	./SpaceRaceSDL
+	./SpaceRaceSDL $(slave)
+

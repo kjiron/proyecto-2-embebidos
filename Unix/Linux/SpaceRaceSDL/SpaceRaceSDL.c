@@ -7,8 +7,8 @@
 #include <unistd.h>
 #include <time.h>
 
-#include "Include/keys.h"
 #include "Include/drawSDL2.h"
+#include "Include/keys.h"
 #include "Include/hit.h"
 
 
@@ -19,37 +19,12 @@
 
 //--------------------------------------------------------------------------
 
-int state = 0, modeGame = 0, i, timeFlag = 0, second = 0, lastsecond = 0;
-
-/*
-banderas ha utilizar en multiplayer
-*/
-
-uint16_t SendAck        = 0x9111;
-uint16_t SendInit       = 0x9222;
-uint16_t SendUpdateAst  = 0x9333;
-uint16_t SendPlayer     = 0x9444;
-uint16_t SendTime       = 0x9555;
-uint16_t SendPlayerX    = 0x9666;
-uint16_t SendScore      = 0x9777;
-uint16_t SendTimeOut    = 0x9888;
-
-//int width, height;		//used if fullscreen
-
-Rect m[NUM_ASTEROIDS], timer;//cuidado
-
-uint8_t flag = 0, flagScore = 0, flagTimeOut = 0;
-
-Splite playerOne, playerPC, playerTwo;
-Keys key;
-
-
-Recta Uart_playerOne, Uart_playerTwo;
-
 /*
 Intenta replicar el delay en pic
 */
-void Delay_ms(uint32_t s) {
+void Delay_ms(uint32_t s) 
+{
+
 	SDL_Delay(s);
 }
 
@@ -94,8 +69,51 @@ void init_game()
     Uart_playerTwo.y = 55;
     Uart_playerTwo.w = 9;
     Uart_playerTwo.h = 9;
-
 }
+
+void init_game_slave()
+{
+    //variables necesarias para el control del juego
+    scoreA = 0;
+    scoreB = 0;
+    timeFlag = 0;
+    modeGame = 0;
+    //playerOne
+    playerOne.rect.x = 940;
+    playerOne.rect.y = 550;
+    playerOne.rect.w = 90;
+    playerOne.rect.h = 90;
+    playerOne.vel.dx = 0;
+    playerOne.vel.dy = 1;
+    //playerPC
+    playerPC.rect.x = 320;
+    playerPC.rect.y = 550;
+    playerPC.rect.w = 90;
+    playerPC.rect.h = 90;
+    playerPC.vel.dx = 0;
+    playerPC.vel.dy = 1;
+    //playerTwo
+    playerTwo = playerPC;
+    //timer
+    timer.x = 620;
+    timer.y = 30;
+    timer.w = 10;
+    timer.h = 600;    
+    //seteo las pocisiones de los asteroides
+    initEnvironment(m);
+
+    //para enviar por uart
+    Uart_playerOne.x = 94;
+    Uart_playerOne.y = 55;
+    Uart_playerOne.w = 9;
+    Uart_playerOne.h = 9;
+
+    Uart_playerTwo.x = 32;
+    Uart_playerTwo.y = 55;
+    Uart_playerTwo.w = 9;
+    Uart_playerTwo.h = 9;
+}
+
 
 void updateGameTime(Rect *t)
 {
@@ -137,9 +155,61 @@ void updateGameTime(Rect *t)
         t->y = t->y  + scale_y;
         timeFlag = 0;
     }
-
 }
 
+/*
+actualizo la bandera para mover los asteroides , el jugador leido por uart y el score
+*/
+void updateAsteroids()
+{
+    int n, i;
+    i = 0;
+    uint16_t mark;
+
+    while (1)
+    {
+        n = Serial_Available();
+        //printf("n > {%d}\n", n);
+
+        if (n >= 2)
+        {
+            Serial_Read(&mark, 2);
+
+            if (mark == SendUpdateAst)
+            {
+                flagMove = 1;
+                //printf("Tick from PIC\n");
+                continue;
+            }
+            
+            if (mark == SendPlayer)
+            {
+                //printf("Recv player from PIC\n");
+                Serial_Read(&Uart_playerTwo, sizeof(Recta));
+                playerTwo.rect.y = Uart_playerTwo.y*scale_y;
+                continue;
+            }
+
+            if (mark == SendPlayerX)
+            {
+                //printf("Recv NEW player from PIC\n");
+                Serial_Read(&Uart_playerOne, sizeof(Recta));
+                playerOne.rect.y = Uart_playerOne.y*scale_y;
+                continue;
+            }
+
+            if (mark == SendScore)
+            {
+                scoreA++;
+                continue;
+            }
+            //printf("playerTwo_slave.y: %i\nplayerTwo_slave.x: %i\n",playerTwo_slave.y, playerTwo_slave.x);
+
+            Serial_clear();
+        }
+        return;
+    }   
+}
 
 /*
 Sincroniza el inicio del juego, ya que necesitamos que los cohetes empiecen 
@@ -169,8 +239,43 @@ void syncGame()
         
         Delay_ms(200);
                
+    }    
+}
+
+/*
+aqui vamos a sincronizar el inicio
+*/
+void syncGame_slave()
+{
+
+    int n;
+    uint16_t mark;
+
+    while (1)
+    {
+        n = Serial_Available();
+        //printf("n: {%d}\n", n);
+
+        if (n >= 2)
+        {
+
+            Serial_Read(&mark, 2);
+            printf("mark: {%d}\n", mark);
+            
+            if (mark == SendInit)
+            {
+
+                printf("Sincronizados\n");
+                Serial_Write(&SendAck, 2);
+                printf("Enviando ACK {%d}\n", SendAck);
+
+                break;
+            }
+
+            Serial_clear();
+
+        }
     }
-    
 }
 
 /*
@@ -278,8 +383,11 @@ void one_player()
   while (quit == 0)
   {
       //aqui verifico si el tiempo se acabo, reinicia todo y lanza un frame
+      
       draw_clear();
+
       updateGameTime(&timer);
+
       if (state == MENU)
       {
       		draw_clear();
@@ -295,16 +403,17 @@ void one_player()
       draw_partial_image(playerPC.rect);
       draw_partial_image(playerOne.rect);
       draw_asteroids(m);
-  		draw_score(scoreA, scoreB);
+      draw_score(scoreA, scoreB);
       SDL_Delay(140);
       refresh_sdl();
   }
 }
 
-void multiplayer()
+void multiplayer_master()
 {
 	draw_clear();
-  refresh_sdl();
+	refresh_sdl();
+
 	randomSeed(33);
 	init_game();
 	syncGame();
@@ -312,6 +421,7 @@ void multiplayer()
 	while(quit==0)
 	{
 		draw_clear();
+
 		moveAndCheckAsteroids(m);
 		updateData();
 
@@ -386,14 +496,139 @@ void multiplayer()
 		draw_partial_image(playerOne.rect);
 		draw_partial_image(playerTwo.rect);
 		draw_asteroids(m);
-  	draw_score(scoreA, scoreB);
+  		draw_score(scoreA, scoreB);
 		Delay_ms(140);
-    refresh_sdl();
-
+    	refresh_sdl();
 	}
 }
 
-int main (int argc, char *args[]) {
+void multiplayer_slave()
+{
+
+    time_t begin_s, end_s;
+    double elapsed;
+
+	draw_clear();
+	refresh_sdl();
+
+	randomSeed(33);
+	init_game_slave();
+	syncGame_slave();
+	time(&begin_s);
+
+	while(quit == 0)
+	{
+		draw_clear();
+
+		updateAsteroids();
+
+		key = readKeys();
+
+		if (key.down && flagMove)
+		{
+			move_player_multi(0);
+			Serial_Write(&SendPlayer, 2);
+			Uart_playerOne.y = playerOne.rect.y/scale_y;
+			Serial_Write(&Uart_playerOne, sizeof(Recta));
+            //SDL_Delay(15);
+		}
+
+		if (key.up && flagMove)
+		{
+			move_player_multi(1);
+			Serial_Write(&SendPlayer, 2);
+			Uart_playerOne.y = playerOne.rect.y/scale_y;
+			Serial_Write(&Uart_playerOne, sizeof(Recta));
+            //SDL_Delay(15);
+		}
+
+        moveAsteroids(m);
+        draw_asteroids(m);
+        draw_box(timer,DRAW);
+		draw_partial_image(playerTwo.rect);
+		draw_partial_image(playerOne.rect);
+  		draw_score(scoreA, scoreB);
+  		refresh_sdl();
+
+  		time(&end_s);
+        elapsed = difftime(end_s, begin_s);
+        if (elapsed >= 1.0)
+        {
+            Serial_Write(&SendTime, 2);
+            i++;
+
+            timer.y = timer.y + scale_y;
+            printf("{%i} \n", i );
+            if (i == 60)
+            {
+                //le mando una marca diciendo que el juego acabo
+                Serial_Write(&SendTimeOut, 2);
+
+                if (scoreA > scoreB)
+                {
+                    draw_loseFrame();
+                }
+
+                else if (scoreB > scoreA)
+                {
+                    draw_winFrame();
+
+                }
+
+                else
+                {
+                    draw_loseFrame();
+                }
+
+				init_game();
+				state = MENU;
+				i=0;
+				if (state == MENU)
+				{
+					draw_clear();
+					break;
+				}   
+            }
+
+            time(&begin_s);
+        }
+	}	
+
+}
+
+void detect_os()
+{
+	#if __linux__
+	    printf("Linux\n");
+		Serial_Init("/dev/ttyUSB0", B19200);
+	#elif __unix__
+	    printf("Other unix OS\n");
+		Serial_Init("/dev/ttyS0", B19200);
+	#else
+	    printf("Unidentified OS\n");
+	#endif
+}
+
+int main (int argc, char **args) {
+
+	if ((args[1] == NULL)||(argc<2))
+	{ 
+		printf("%s Error, hierarchy not specified.\n Specify with slave=S or slave=Y",args[0]);
+		return 1;
+	}
+	else
+	{
+		if (!strcmp(args[1], "Y")||!strcmp(args[1], "S")||!strcmp(args[1], "y"))
+		{
+			printf("Settings as slave.\n");
+			slave = 1;
+		}
+		else
+		{
+			printf("Settings as master.\n");
+			slave = 0;
+		}
+	}
 
 	int sleep = 0;
 
@@ -406,9 +641,9 @@ int main (int argc, char *args[]) {
 	//SDL_GetWindowSize(window, &width, &height);
 	Uint32 next_game_tick = SDL_GetTicks();
 	
-	Serial_Init("/dev/ttyUSB0", B19200);
-  randomSeed(33);
-  initEnvironment(m);
+	detect_os();
+  	randomSeed(33);
+  	initEnvironment(m);
 	init_game();
 
 	//render loop
@@ -443,7 +678,16 @@ int main (int argc, char *args[]) {
 		    break;
 
 		case MULTIPLAYER: 
-		    multiplayer();
+			if (slave)
+			{
+				printf("MULTIPLAYER as slave\n");
+				multiplayer_slave();
+			}
+			else
+			{
+				printf("MULTIPLAYER as master\n");
+			    multiplayer_master();
+			}
 		    break;
 		default:
 		    break;

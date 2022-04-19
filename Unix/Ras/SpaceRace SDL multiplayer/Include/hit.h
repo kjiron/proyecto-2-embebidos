@@ -38,7 +38,7 @@ Splite move_player(Splite player, Rect *a)
    for (i = 0; i <= NUM_ASTEROIDS - 1; i++){
       if (check_collision(a[i], player.rect))
       {
-         player.rect.x = 320;
+         //player.rect.x = 320;
          player.rect.y = 550;
          return player;
       }
@@ -54,7 +54,7 @@ Splite move_player(Splite player, Rect *a)
    else if (key.up){
       player.rect.y -= player.vel.dy*scale_y;
       if (player.rect.y <= 0){
-         player.rect.x = 320;
+         //player.rect.x = 320;
          player.rect.y = 550;
          scoreA++;
          //draw_score(scoreA, scoreB);
@@ -78,7 +78,7 @@ Splite move_ai(Splite pc, Rect *a)
    {
       if (check_collision(a[i], pc.rect))
       {
-         pc.rect.x = 940;
+         //pc.rect.x = 940;
          pc.rect.y = 550;
          return pc;
       }
@@ -112,7 +112,7 @@ Splite move_ai(Splite pc, Rect *a)
 
    if (pc.rect.y <= 0)
    {
-      pc.rect.x = 940;
+      //pc.rect.x = 940;
       pc.rect.y = 550;
       scoreB++;
       //draw_score(scoreA, scoreB);  

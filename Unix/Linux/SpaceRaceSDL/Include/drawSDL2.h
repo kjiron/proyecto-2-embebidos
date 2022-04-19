@@ -12,7 +12,24 @@
 
 int scale_x = SCREEN_WIDTH/128;
 int scale_y = SCREEN_HEIGHT/64;
-char score_text[5];
+
+uint8_t flag = 0, flagScore = 0, flagTimeOut = 0, flagMove = 0;
+
+int state = 0, modeGame = 0, i, timeFlag = 0, second = 0, lastsecond = 0, slave = 0;
+
+/*
+banderas ha utilizar en multiplayer
+*/
+uint16_t SendAck        = 0x9111;
+uint16_t SendInit       = 0x9222;
+uint16_t SendUpdateAst  = 0x9333;
+uint16_t SendPlayer     = 0x9444;
+uint16_t SendTime       = 0x9555;
+uint16_t SendPlayerX    = 0x9666;
+uint16_t SendScore      = 0x9777;
+uint16_t SendTimeOut    = 0x9888;
+
+//---------------------------------------
 SDL_Window* window = NULL;  //The window we'll be rendering to
 SDL_Renderer *renderer;   //The renderer SDL will use to draw to the screen
 
@@ -59,15 +76,22 @@ typedef struct
   Vec2 vel;
 } Splite;
 
-void draw_clear(){
-  SDL_RenderClear(renderer);
-  SDL_FillRect(screen, NULL, 0x000000ff);
-}
+
+Splite playerOne, playerPC, playerTwo;
+Keys key;
+
+Rect m[NUM_ASTEROIDS], timer ;
+Recta Uart_playerOne, Uart_playerTwo;
 
 void refresh_sdl(){
   SDL_UpdateTexture(screen_texture, NULL, screen->pixels, screen->w * sizeof (Uint32));
   SDL_RenderCopy(renderer, screen_texture, NULL, NULL);
   SDL_RenderPresent(renderer);
+}
+
+void draw_clear(){
+  SDL_RenderClear(renderer);
+  SDL_FillRect(screen, NULL, 0x000000ff);
 }
 
 void draw_on_SDL_screen(SDL_Surface *temp) {  
@@ -169,6 +193,33 @@ void draw_horizontal_line(Rect asteroid, int color){
   draw_box(asteroid, color);
 }
 
+/*
+dibujos los asteroides
+*/
+void draw_asteroids(Rect *s) {
+  SDL_Rect src;
+  //printf("pintando la picha\n");
+  
+  for (int i = 0; i < NUM_ASTEROIDS; i++)
+    {
+        src.x = s[i].x;
+        src.y = s[i].y;
+        src.w = s[i].w;
+        src.h = s[i].h;
+        int r = SDL_FillRect(screen, &src, 0xffffffff);
+    }
+}
+
+/*
+void draw_asteroids(Rect *m)
+{
+  for (int i = 0; i <= NUM_ASTEROIDS - 1; i++)
+  {
+    draw_horizontal_line(m[i],DRAW);
+  }
+}
+*/
+
 int draw_MenuGame(int modeGame)
 {
   Keys key;
@@ -176,6 +227,7 @@ int draw_MenuGame(int modeGame)
   draw_clear();
   draw_MenuFrame();
   draw_circle(select,1);
+  refresh_sdl();
   
   while (quit==0)
   {
@@ -192,7 +244,8 @@ int draw_MenuGame(int modeGame)
       select.y = 440;  //offset
       draw_circle(select, 1);
       modeGame = 1;
-      SDL_Delay(666);
+      SDL_Delay(666);        
+      refresh_sdl();
       continue;
     }
     if ((key.enter) && (modeGame == 1))
@@ -206,8 +259,8 @@ int draw_MenuGame(int modeGame)
       draw_circle(select, 1);
       modeGame = 0;
       SDL_Delay(666);
+      refresh_sdl();
     }
-    refresh_sdl();
   }
 }
 
@@ -280,15 +333,6 @@ void draw_score(uint8_t a, uint8_t b){
   }
 }
 
-void draw_asteroids(Rect *m)
-{
-  for (int i = 0; i <= NUM_ASTEROIDS - 1; i++)
-  {
-    draw_horizontal_line(m[i],DRAW);
-  }
-}
-
-
 int SDL_init(int width, int height, int argc, char *args[]) {
 
   //Initialize SDL
@@ -300,14 +344,22 @@ int SDL_init(int width, int height, int argc, char *args[]) {
   } 
   
   int i;
-  
+  int a = 0;
   for (i = 0; i < argc; i++) {
     
     //Create window 
     if(strcmp(args[i], "-f")) {
       
-      SDL_CreateWindowAndRenderer(SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN, &window, &renderer);
-    
+      if (a)
+      {
+        continue;
+      }
+      else
+      {
+
+        SDL_CreateWindowAndRenderer(SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN, &window, &renderer);
+        a = 1;
+      }
     } else {
     
       SDL_CreateWindowAndRenderer(SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_FULLSCREEN, &window, &renderer);

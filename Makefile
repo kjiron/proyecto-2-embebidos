@@ -2,7 +2,7 @@
 
 GIT:
 	git add .
-	git commit -am "Corrigiendo errores Ras-PC"
+	git commit -am "Condensando las progras Unix en una sola"
 	git push
 PC:
 	git stash
