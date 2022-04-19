@@ -6,6 +6,7 @@
 #include <stdbool.h>
 #include <unistd.h>
 #include <time.h>
+#include <sys/utsname.h>
 
 #include "Include/drawSDL2.h"
 #include "Include/keys.h"
@@ -598,6 +599,13 @@ void multiplayer_slave()
 
 void detect_os()
 {
+
+	struct utsname uts;
+	uname(&uts);
+	printf("System is %s on %s hardware\n",uts.sysname, uts.machine);
+	printf("OS Release is %s\n",uts.release);
+	printf("OS Version is %s\n",uts.version);
+
 	#if __linux__
 	    printf("Linux\n");
 		Serial_Init("/dev/ttyUSB0", B19200);
