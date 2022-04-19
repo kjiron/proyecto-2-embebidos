@@ -602,19 +602,21 @@ void detect_os()
 
 	struct utsname uts;
 	uname(&uts);
-	printf("System is %s on %s hardware\n",uts.sysname, uts.machine);
-	printf("OS Release is %s\n",uts.release);
-	printf("OS Version is %s\n",uts.version);
 
-	#if __linux__
+	if (!strcmp(uts.machine, "x86_64"))
+	{
 	    printf("Linux\n");
 		Serial_Init("/dev/ttyUSB0", B19200);
-	#elif __unix__
-	    printf("Other unix OS\n");
+	}
+	else if (!strcmp(uts.machine, "armv7l"))
+	{
+	    printf("Rasp\n");
 		Serial_Init("/dev/ttyS0", B19200);
-	#else
-	    printf("Unidentified OS\n");
-	#endif
+	}
+	else
+	{
+		printf("Unrecognizable OS.\n");
+	}
 }
 
 int main (int argc, char **args) {
