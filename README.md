@@ -1,5 +1,8 @@
 # Sistemas empotrados heterogéneos
 
+Este proyecto consiste en el desarrollo de un juego llamado space race, puede ver el original [aquí](https://www.youtube.com/watch?v=0eBUoY6W8BY). La idea es lograr la comunicación entre sistemas heterogéneos, como es el caso de PIC8, Raspberry Pi y Linux. Este proyecto permite la comunicación entre estas plataformas para poder jugar en el modo de dos jugadores, por medio del protocolo UART. Este se desarrolló en la placa de desarrollo de [MikroE easypic](https://www.mikroe.com/easypic-dspic30).
+
+
 ## ToDo KJiron
 - [x] [environment](/backup/PIC/asteroidsDBG.c)  
 - [x] [time](/backup/PIC/timerDBG.c) esta hecho por interrupción, hay que ver si da problema con el UART. Lo mejor sería implementar la función milis() para no tener 500ms quemados. 
